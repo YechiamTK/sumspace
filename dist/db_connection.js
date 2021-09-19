@@ -37,17 +37,48 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectToDb = void 0;
-var mongoose_1 = require("mongoose");
-function connectToDb(db) {
+function initSchemas(mongoose) {
     return __awaiter(this, void 0, void 0, function () {
-        var mongoose;
+        var userSchema, User, summarySchema, Summary, CommentSchema, Comment, ArticleSchema, Article;
+        return __generator(this, function (_a) {
+            userSchema = new mongoose.Schema({
+                name: String,
+                comments: Array,
+                likes: Number
+            });
+            User = mongoose.model('User', userSchema);
+            summarySchema = new mongoose.Schema({
+                user: String,
+                comments: Array,
+                article: Object,
+                rating: Number,
+                likes: Number
+            });
+            Summary = mongoose.model('Summary', summarySchema);
+            CommentSchema = new mongoose.Schema({
+                user: String,
+                comments: Array,
+                likes: Number
+            });
+            Comment = mongoose.model('Comment', CommentSchema);
+            ArticleSchema = new mongoose.Schema({
+                title: String,
+                author: String,
+                link: String,
+                tags: Array //need to be of type Tag
+            });
+            Article = mongoose.model('Article', ArticleSchema);
+            return [2 /*return*/, { user: User, summary: Summary, comment: Comment, article: Article }];
+        });
+    });
+}
+function connectToDb(mongoose, db) {
+    return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    mongoose = new mongoose_1.Mongoose();
-                    return [4 /*yield*/, mongoose.connect(db, function () {
-                            console.log("connection successful!");
-                        })];
+                case 0: return [4 /*yield*/, mongoose.connect(db, function () {
+                        console.log("connection successful!");
+                    })];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];

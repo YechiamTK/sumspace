@@ -1,4 +1,5 @@
 import express from 'express';
+import { Mongoose } from 'mongoose';
 import {connectToDb} from './db_connection';
 import {loadHtml} from './restful_connections';
 //import 'semantic-ui-css/semantic.min.css';
@@ -11,6 +12,7 @@ async function main() {
   const app = express();
   const router = express.Router();
   const port = 3000;
+  const mongoose = new Mongoose();
   const db = 'mongodb://localhost:27017/SumSpace';
   app.use(express.static('dist'));
 
@@ -18,7 +20,7 @@ async function main() {
   loadHtml(router,'./index.html');
 
   //start the db connection
-  connectToDb(db);
+  connectToDb(mongoose, db);
 
   //start the server connection
   app.use('/', router);

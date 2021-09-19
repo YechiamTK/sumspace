@@ -40,23 +40,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
+var mongoose_1 = require("mongoose");
 var db_connection_1 = require("./db_connection");
 var restful_connections_1 = require("./restful_connections");
 //import 'semantic-ui-css/semantic.min.css';
 main().catch(function (err) { return console.log(err); });
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var app, router, port, db;
+        var app, router, port, mongoose, db;
         return __generator(this, function (_a) {
             app = (0, express_1.default)();
             router = express_1.default.Router();
             port = 3000;
+            mongoose = new mongoose_1.Mongoose();
             db = 'mongodb://localhost:27017/SumSpace';
             app.use(express_1.default.static('dist'));
             //load up the website
             (0, restful_connections_1.loadHtml)(router, './index.html');
             //start the db connection
-            (0, db_connection_1.connectToDb)(db);
+            (0, db_connection_1.connectToDb)(mongoose, db);
             //start the server connection
             app.use('/', router);
             app.listen(port, function () {
