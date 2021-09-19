@@ -35,37 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var db_connection_1 = require("./db_connection");
-var restful_connections_1 = require("./restful_connections");
-//import 'semantic-ui-css/semantic.min.css';
-main().catch(function (err) { return console.log(err); });
-function main() {
+exports.loadHtml = void 0;
+function loadHtml(router, html) {
     return __awaiter(this, void 0, void 0, function () {
-        var app, router, port, db;
         return __generator(this, function (_a) {
-            app = (0, express_1.default)();
-            router = express_1.default.Router();
-            port = 3000;
-            db = 'mongodb://localhost:27017/SumSpace';
-            app.use(express_1.default.static('dist'));
-            //load up the website
-            (0, restful_connections_1.loadHtml)(router, './index.html');
-            //start the db connection
-            (0, db_connection_1.connectToDb)(db);
-            //start the server connection
-            app.use('/', router);
-            app.listen(port, function () {
-                /* if (err) {
-                  return console.error(err);
-                } */
-                return console.log("server is listening on " + port);
+            router.get('/', function (req, res) {
+                res.send(html);
             });
             return [2 /*return*/];
         });
     });
 }
+exports.loadHtml = loadHtml;
