@@ -1,0 +1,39 @@
+{
+  "name": "server-dir",
+  "version": "1.0.0",
+  "description": "nodejs server for sumspace",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "start:dev": "./node_modules/nodemon/bin/nodemon.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint --project tsconfig.json --config eslintrc.js",
+    "eslint-fix": "eslint --project tsconfig.json --config eslintrc.js --fix",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YechiamTK/SumSpace.git"
+  },
+  "author": "Yechiam Weiss",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YechiamTK/SumSpace/issues"
+  },
+  "homepage": "https://github.com/YechiamTK/SumSpace#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "eslint": "^7.32.0",
+    "nodemon": "^2.0.12",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3",
+    "webpack": "^5.53.0",
+    "webpack-cli": "^4.8.0"
+  }
+}
