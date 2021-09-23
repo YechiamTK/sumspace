@@ -7,7 +7,8 @@
     "start": "ts-node index.ts",
     "start:dev": "./node_modules/nodemon/bin/nodemon.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eslint": "eslint --project tsconfig.json --config eslintrc.js",
+    "eslint-deb": "eslint --project tsconfig.json --config eslintrc.js",
+    "eslint-of": "eslint . --ext .js, .jsx, .ts, .tsx",
     "eslint-fix": "eslint --project tsconfig.json --config eslintrc.js --fix",
     "build": "webpack"
   },
