@@ -6,11 +6,20 @@
 
 import express from 'express';
 
-async function loadHtml(router: express.Router, html: string) {
-    router.get('/', (req, res) => {
-        res.send(html);
+
+/**
+ * util function loadFile:
+ * 
+ * loads up a file onto a given route. 
+ * @param router express router to be used
+ * @param route route to send the file to
+ * @param file file to send
+ */
+async function loadFile(router: express.Router, route: string, file: string) {
+    router.get(route, (req, res) => {
+        res.sendFile(file);
       });
 
 }
 
-export {loadHtml}; 
+export {loadFile}; 
