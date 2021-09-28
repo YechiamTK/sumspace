@@ -15,10 +15,28 @@ import { Mongoose } from 'mongoose';
  */
 async function connectToDb(db: string) {
     const mongoose = new Mongoose();
-    mongoose.connect(db, () => {
-        console.log("connection successful!");
-    });
-
+    try {
+        await mongoose.connect(db, () => {
+            console.log("connection successful!");
+        });
+        mongoose.connection.on('connect', ()=>{
+            console.log("actually succesfully connected");
+        })
+    }
+    catch (error){
+        console.log(error);
+    }
+    return mongoose;
 }
 
-export {connectToDb};
+async function keepAwake(mongoose: Promise<Mongoose>, db: string) {
+    (await mongoose).connection.on('error',err=>{
+        console.log(err);
+    });
+    (await mongoose).connection.on('disconnected', err=>{
+        console.log(err);
+        connectToDb(db);
+    });
+}
+
+export {connectToDb, keepAwake};

@@ -5,7 +5,8 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { User, userModel } from './schemas';
+import { Mongoose } from 'mongoose';
+import { User, createUserModel } from './schemas';
 
 
 /**
@@ -29,11 +30,12 @@ export async function loadFile(router: Router, route: string, file: string) {
  * attempts to log in an existing user.
  * @param router express router to be used
  */
-export async function loginUser(router: Router){
-  router.get('/login/user/:user/password/:password',(req: Request, res: Response)=>{
+export async function loginUser(router: Router, mongoose: Mongoose){
+  router.post('/login',(req: Request, res: Response)=>{
     console.log('Entered login process!');  //debug
-    const {user, password} = req.params;
-    userModel.findOne({'username': user, 'password': password}, (err: any, userFound: User)=>{
+    const {username, password} = req.body.params;
+    const userModel = createUserModel(mongoose);
+    userModel.findOne({'username': username, 'password': password}, (err: any, userFound: User)=>{
       if (err){
         console.log('User not found!');
         return;
@@ -49,16 +51,19 @@ export async function loginUser(router: Router){
  * attempts to register a new user.
  * @param router express router to be used
  */
-export async function registerUser(router: Router){
+export async function registerUser(router: Router, mongoose: Mongoose){
   router.post('/register',async (req: Request, res: Response)=>{
-    const {_username, _firstName, _lastName, _password} = req.body;
+    const {username, firstName, lastName, password} = req.body.params;
+    console.log(req.body.params);
+    const userModel = createUserModel(mongoose);
+    console.log("connected to user model");
     const newUser = new userModel({
-      username: _username,
-      firstName: _firstName,
-      lastName: _lastName,
-      password: _password
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      password: password
     });
-    console.log(newUser.username);
+    console.log("create new user named: " + newUser.username);
     await newUser.save((err:any,user:User)=>{
       if (err){
         console.log("An error has accured: " + err);

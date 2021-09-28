@@ -23,7 +23,7 @@ const LoginView = (props : loginViewProps):JSX.Element => {
   }
 
   const attemptLogin = (event: FormEvent<HTMLFormElement>) => {
-    axios.get('/login', {
+    axios.post('/login', {
       params: {
         username: username,
         password: password
