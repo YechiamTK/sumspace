@@ -66,7 +66,7 @@ export interface Author {
  * @param followedTags an array of type Tag
  * @param followedUsers an array of type User
  */
-export function createUserModel(mongoose: Mongoose){
+export function retrieveUserSchema(mongoose: Mongoose){
     const userScehma = new mongoose.Schema<User>({
         username : { type: String, required: true },
         firstName : { type: String, required: true },
@@ -78,9 +78,7 @@ export function createUserModel(mongoose: Mongoose){
         followedUsers : [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}]
     });
 
-    const userModel = mongoose.model('User', userScehma);
-
-    return (userModel);
+    return (userScehma);
 }
 
 /***
@@ -97,7 +95,7 @@ export function createUserModel(mongoose: Mongoose){
  * @param link
  * @param tags an array of type Tag
  */
-export function createArticleModel(mongoose: Mongoose){
+export function retrieveArticleModel(mongoose: Mongoose){
     const articleScehma = new mongoose.Schema<Article>({
         title : {type: String, required: true},
         author : {type: String, required: true},
@@ -127,7 +125,7 @@ export function createArticleModel(mongoose: Mongoose){
  * @param article of type Article
  * @param followedUsers an array of type User 
  */
-export function createSummaryModel(mongoose: Mongoose){
+export function retrieveSummaryModel(mongoose: Mongoose){
     const summaryScehma = new mongoose.Schema({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
@@ -156,7 +154,7 @@ export function createSummaryModel(mongoose: Mongoose){
  * @param followedAuthors an array of type Comment
  * @param likes
  */
- export function createCommentModel(mongoose: Mongoose){
+ export function retrieveCommentModel(mongoose: Mongoose){
     const commentScehma = new mongoose.Schema({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
@@ -179,7 +177,7 @@ export function createSummaryModel(mongoose: Mongoose){
  * 
  * @param tagName
  */
- export function createTagModel(mongoose: Mongoose){
+ export function retrieveTagModel(mongoose: Mongoose){
     const tagScehma = new mongoose.Schema({
         tagName : {type: String, required: true}
     });
@@ -201,7 +199,7 @@ export function createSummaryModel(mongoose: Mongoose){
  * @param name
  * @param articles an array of type Article
  */
- export function createAuthorModel(mongoose: Mongoose){
+ export function retrieveAuthorModel(mongoose: Mongoose){
     const authorScehma = new mongoose.Schema({
         name : {type: String, required: true},
         articles : [{type:mongoose.Schema.Types.ObjectId, ref: 'Article'}]

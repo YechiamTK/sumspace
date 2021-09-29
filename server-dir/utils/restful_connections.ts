@@ -6,7 +6,7 @@
 
 import { Router, Request, Response } from 'express';
 import { Mongoose } from 'mongoose';
-import { User, createUserModel } from './schemas';
+import { User, retrieveUserSchema } from './schemas';
 
 
 /**
@@ -31,17 +31,17 @@ export async function loadFile(router: Router, route: string, file: string) {
  * @param router express router to be used
  */
 export async function loginUser(router: Router, mongoose: Mongoose){
-  router.post('/login',(req: Request, res: Response)=>{
+  router.post('/login',async (req: Request, res: Response)=>{
     console.log('Entered login process!');  //debug
     const {username, password} = req.body.params;
-    const userModel = createUserModel(mongoose);
-    userModel.findOne({'username': username, 'password': password}, (err: any, userFound: User)=>{
-      if (err){
-        console.log('User not found!');
-        return;
-      }
-      console.log('User' + userFound.username + 'found!');
-    })
+    const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
+    await userModel.findOne({'username': username, 'password': password}).exec().then((result: User)=>{
+      console.log('User ' + result.username + ' found!');
+      res.send(result.username);
+    });/* .catch(exception){
+      console.log("An Error has occured!");
+      console.log(exception);
+    }; */
   });
 }
 
@@ -55,7 +55,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
   router.post('/register',async (req: Request, res: Response)=>{
     const {username, firstName, lastName, password} = req.body.params;
     console.log(req.body.params);
-    const userModel = createUserModel(mongoose);
+    const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
     console.log("connected to user model");
     const newUser = new userModel({
       username: username,

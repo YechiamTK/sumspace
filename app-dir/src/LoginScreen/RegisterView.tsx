@@ -4,7 +4,7 @@ import { Button, ButtonProps, Form, Header, InputProps } from 'semantic-ui-react
 
 type registerViewProps = {
     viewChange: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void
-  }
+}
 
 const RegisterView = (props : registerViewProps):JSX.Element => {
     const [username, setUsername] = useState('');

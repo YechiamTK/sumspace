@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import { Grid } from 'semantic-ui-react';
 import LoginView from './LoginView';
 import RegisterView from './RegisterView';
 
-const LoginScreen = ():JSX.Element => {
-    const [loginBool, loginSwitch] = useState(true);
+type LoginScreenProps = {
+    login: () => void
+}
+
+const LoginScreen = (props: LoginScreenProps):JSX.Element => {
+    const [switchLoginView, loginSwitch] = useState(true);
     return(
-        <> 
-            {loginBool ? 
-            <LoginView viewChange={()=>{loginSwitch(false)}}/> :
+        <Grid.Column style={{maxWidth:450}}>
+            {switchLoginView ? 
+            <LoginView viewChange={()=>{loginSwitch(false)}} loginAction={()=>{props.login()}}/> :
             <RegisterView viewChange={()=>{loginSwitch(true)}}/>}
-        </>
+        </Grid.Column>
     )
 }
 

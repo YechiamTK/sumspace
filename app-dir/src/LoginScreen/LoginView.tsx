@@ -3,7 +3,8 @@ import { Button, ButtonProps, Form, Header, InputProps } from 'semantic-ui-react
 import axios from 'axios';
 
 type loginViewProps = {
-  viewChange: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void
+  viewChange: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void,
+  loginAction: () => void
 }
 
 
@@ -29,7 +30,11 @@ const LoginView = (props : loginViewProps):JSX.Element => {
         password: password
       }
     }).then((response)=>{
-      console.log(response);
+      console.log("Received response for user named: " + response.data);
+      props.loginAction();
+    }).catch((err)=>{
+      console.log("An Error has occured!");
+      console.log(err);
     });
   
     event.preventDefault();
