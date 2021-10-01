@@ -23,11 +23,19 @@ export const MainView = () => {
     
     const date = new Date();
     return(
-        <Feed>
+        <Feed size="large">
             <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
+                <Feed.Label image={"./img/profile.jpg"}/>
                 <Feed.Content
-                    date={date.getTime()}
+                    date={date.toLocaleTimeString()}
+                    summary="New summary published"
+                    extraText="New summary x for article y"
+                />
+            </Feed.Event>
+            <Feed.Event>
+                <Feed.Label image={"./img/profile.jpg"}/>
+                <Feed.Content
+                    date={date.toLocaleTimeString()}
                     summary="New summary published"
                     extraText="New summary x for article y"
                 />
@@ -35,22 +43,14 @@ export const MainView = () => {
             <Feed.Event>
                 <Feed.Label image={"../img/profile.jpg"}/>
                 <Feed.Content
-                    date={date.getTime()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.getTime()}
+                    date={date.toLocaleTimeString()}
                     summary="New summary published"
                     extraText="New summary x for article y"
                 />
             </Feed.Event><Feed.Event>
                 <Feed.Label image={"../img/profile.jpg"}/>
                 <Feed.Content
-                    date={date.getTime()}
+                    date={date.toLocaleTimeString()}
                     summary="New summary published"
                     extraText="New summary x for article y"
                 />
@@ -58,7 +58,7 @@ export const MainView = () => {
             <Feed.Event>
                 <Feed.Label image={"../img/profile.jpg"}/>
                 <Feed.Content
-                    date={date.getTime()}
+                    date={date.toLocaleTimeString()}
                     summary="New summary published"
                     extraText="New summary x for article y"
                 />
@@ -66,7 +66,39 @@ export const MainView = () => {
             <Feed.Event>
                 <Feed.Label image={"../img/profile.jpg"}/>
                 <Feed.Content
-                    date={date.getTime()}
+                    date={date.toLocaleTimeString()}
+                    summary="New summary published"
+                    extraText="New summary x for article y"
+                />
+            </Feed.Event>
+            <Feed.Event>
+                <Feed.Label image={"../img/profile.jpg"}/>
+                <Feed.Content
+                    date={date.toLocaleTimeString()}
+                    summary="New summary published"
+                    extraText="New summary x for article y"
+                />
+            </Feed.Event>
+            <Feed.Event>
+                <Feed.Label image={"../img/profile.jpg"}/>
+                <Feed.Content
+                    date={date.toLocaleTimeString()}
+                    summary="New summary published"
+                    extraText="New summary x for article y"
+                />
+            </Feed.Event>
+            <Feed.Event>
+                <Feed.Label image={"../img/profile.jpg"}/>
+                <Feed.Content
+                    date={date.toLocaleTimeString()}
+                    summary="New summary published"
+                    extraText="New summary x for article y"
+                />
+            </Feed.Event>
+            <Feed.Event>
+                <Feed.Label image={"../img/profile.jpg"}/>
+                <Feed.Content
+                    date={date.toLocaleTimeString()}
                     summary="New summary published"
                     extraText="New summary x for article y"
                 />
