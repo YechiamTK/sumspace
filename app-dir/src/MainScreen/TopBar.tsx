@@ -9,7 +9,7 @@ export const TopBar = ():JSX.Element => {
     //and how to differentiate it from Side Bar.
 
     return (
-        <Menu size='large' fixed="top">
+        <Menu size='large' fixed="top" inverted style={{backgroundColor: "#113240"}}>
             <Menu.Item 
                 name="Home"
                 as='a'
