@@ -18,7 +18,7 @@ export interface User {
 
 export interface Article {
     title : string,
-    author : string,
+    author : Author,
     publishDate : Date,
     link : string,
     tags? : Array<Tag>
@@ -67,7 +67,7 @@ export interface Author {
  * @param followedUsers an array of type User
  */
 export function retrieveUserSchema(mongoose: Mongoose){
-    const userScehma = new mongoose.Schema<User>({
+    const userSchema = new mongoose.Schema<User>({
         username : { type: String, required: true },
         firstName : { type: String, required: true },
         lastName : { type: String, required: true },
@@ -78,7 +78,7 @@ export function retrieveUserSchema(mongoose: Mongoose){
         followedUsers : [{type:mongoose.Schema.Types.ObjectId, ref: 'User'}]
     });
 
-    return (userScehma);
+    return (userSchema);
 }
 
 /***
@@ -95,18 +95,16 @@ export function retrieveUserSchema(mongoose: Mongoose){
  * @param link
  * @param tags an array of type Tag
  */
-export function retrieveArticleModel(mongoose: Mongoose){
-    const articleScehma = new mongoose.Schema<Article>({
+export function retrieveArticleSchema(mongoose: Mongoose){
+    const articleSchema = new mongoose.Schema<Article>({
         title : {type: String, required: true},
-        author : {type: String, required: true},
+        author : {type:mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
         publishDate : {type: Date, required: true},
         link : {type: String, required: true},
         tags : [{type:mongoose.Schema.Types.ObjectId, ref: 'Tag'}]
     });
 
-    const articleModel = mongoose.model('Article', articleScehma);
-
-    return (articleModel);
+    return (articleSchema);
 }
 
 /***
@@ -125,8 +123,8 @@ export function retrieveArticleModel(mongoose: Mongoose){
  * @param article of type Article
  * @param followedUsers an array of type User 
  */
-export function retrieveSummaryModel(mongoose: Mongoose){
-    const summaryScehma = new mongoose.Schema({
+export function retrieveSummarySchema(mongoose: Mongoose){
+    const summarySchema = new mongoose.Schema({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
         rating : {type: Number, required: true},
@@ -136,9 +134,7 @@ export function retrieveSummaryModel(mongoose: Mongoose){
         tags : [{type:mongoose.Schema.Types.ObjectId, ref: 'Tag'}]
     });
     
-    const summaryModel = mongoose.model('Summary', summaryScehma);
-
-    return (summaryModel);
+    return (summarySchema);
 }
 
 
@@ -154,16 +150,14 @@ export function retrieveSummaryModel(mongoose: Mongoose){
  * @param followedAuthors an array of type Comment
  * @param likes
  */
- export function retrieveCommentModel(mongoose: Mongoose){
-    const commentScehma = new mongoose.Schema({
+ export function retrieveCommentSchema(mongoose: Mongoose){
+    const commentSchema = new mongoose.Schema({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
         likes : {type: Number, required: true}
     });
 
-    const commentModel = mongoose.model('Comment', commentScehma);
-
-    return (commentModel);
+    return (commentSchema);
 }
 
 
@@ -177,14 +171,12 @@ export function retrieveSummaryModel(mongoose: Mongoose){
  * 
  * @param tagName
  */
- export function retrieveTagModel(mongoose: Mongoose){
-    const tagScehma = new mongoose.Schema({
+ export function retrieveTagSchema(mongoose: Mongoose){
+    const tagSchema = new mongoose.Schema({
         tagName : {type: String, required: true}
     });
 
-    const tagModel = mongoose.model('Tag', tagScehma);
-
-    return (tagModel);
+    return (tagSchema);
 }
 
 
@@ -199,13 +191,11 @@ export function retrieveSummaryModel(mongoose: Mongoose){
  * @param name
  * @param articles an array of type Article
  */
- export function retrieveAuthorModel(mongoose: Mongoose){
-    const authorScehma = new mongoose.Schema({
+ export function retrieveAuthorSchema(mongoose: Mongoose){
+    const authorSchema = new mongoose.Schema({
         name : {type: String, required: true},
         articles : [{type:mongoose.Schema.Types.ObjectId, ref: 'Article'}]
     });
 
-    const authorModel = mongoose.model('Author', authorScehma);
-
-    return (authorModel);
+    return (authorSchema);
 }

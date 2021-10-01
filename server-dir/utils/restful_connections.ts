@@ -6,7 +6,7 @@
 
 import { Router, Request, Response } from 'express';
 import { Mongoose } from 'mongoose';
-import { User, retrieveUserSchema } from './schemas';
+import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema } from './schemas';
 
 
 /**
@@ -65,6 +65,94 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     });
     console.log("create new user named: " + newUser.username);
     await newUser.save((err:any,user:User)=>{
+      if (err){
+        console.log("An error has accured: " + err);
+      }
+      else{
+        console.log("User registered successfuly!");
+      }
+    });
+  });
+}
+
+/**
+ * util function newAuthor:
+ * 
+ * registers a new author.
+ * @param router express router to be used
+ */
+ export async function newAuthor(router: Router, mongoose: Mongoose){
+  router.post('/register',async (req: Request, res: Response)=>{
+    const {name} = req.body.params;
+    console.log(req.body.params);
+    const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
+    console.log("connected to author model");
+    const author = new authorModel({
+      name: name
+    });
+    console.log("create new author named: " + author.name);
+    await author.save((err:any,author:Author)=>{
+      if (err){
+        console.log("An error has accured: " + err);
+      }
+      else{
+        console.log("User registered successfuly!");
+      }
+    });
+  });
+}
+
+/**
+ * util function newArticle:
+ * 
+ * inserts a new article from the given author.
+ * @param router express router to be used
+ */
+ export async function newArticle(router: Router, mongoose: Mongoose){
+  router.post('/new-article',async (req: Request, res: Response)=>{
+    const {title, author, publishDate, link} = req.body.params;
+    console.log(req.body.params);
+    const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+    console.log("connected to article model");
+    const article = new articleModel({
+      title: title,
+      author: author,
+      publishDate: publishDate,
+      link: link
+    });
+    console.log("create new article named: " + article.title);
+    await article.save((err:any,article:Article)=>{
+      if (err){
+        console.log("An error has accured: " + err);
+      }
+      else{
+        console.log("User registered successfuly!");
+      }
+    });
+  });
+}
+
+/**
+ * util function newSummary:
+ * 
+ * posts a new summary from the given user.
+ * @param router express router to be used
+ */
+ export async function newSummary(router: Router, mongoose: Mongoose){
+  router.post('/register',async (req: Request, res: Response)=>{
+    const {user, rating, likes, publishDate, article } = req.body.params;
+    console.log(req.body.params);
+    const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+    console.log("connected to user model");
+    const summary = new summaryModel({
+      user: user,
+      rating: rating,
+      likes: likes,
+      publishDate: publishDate,
+      article: article
+    });
+    console.log("create new summary from user: " + summary.user);
+    await summary.save((err:any,summary:Summary)=>{
       if (err){
         console.log("An error has accured: " + err);
       }
