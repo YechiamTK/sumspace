@@ -8,14 +8,14 @@ function App():JSX.Element {
 
   return (
     <Grid textAlign='center' verticalAlign='middle' style={{ height: '100vh' }} columns={1} centered>
-      <Grid.Row>
+      
         {loginBool ? 
           <Layout /> :
         <Grid.Column style={{maxWidth:450}}>
           <LoginScreen login={()=>{setLogin(true)}}/>
         </Grid.Column>
         }
-      </Grid.Row>
+      
     </Grid>
   );
 }
