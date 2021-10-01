@@ -1,8 +1,8 @@
 import React from "react";
-import { Container, Menu } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 
 
-export const SidebarRight = () => {
+export const SidebarRight = ():JSX.Element => {
 
     return (
         <Menu size="large" vertical fixed="right" style={{ height: '100vh', top: '10vh'}}>

@@ -4,7 +4,7 @@ import { Feed } from "semantic-ui-react";
 
 //Might divide this into a smaller "FeedView" tsx
 //And put it here with more context, if there is.
-export const MainView = () => {
+export const MainView = ():JSX.Element => {
 
     //Need to do:
     //1.Get user information -
