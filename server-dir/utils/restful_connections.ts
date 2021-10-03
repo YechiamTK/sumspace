@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { Mongoose } from 'mongoose';
+import { Mongoose, ObjectId } from 'mongoose';
 import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema } from './schemas';
 
 
@@ -82,7 +82,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * @param router express router to be used
  */
  export async function newAuthor(router: Router, mongoose: Mongoose){
-  router.post('/register',async (req: Request, res: Response)=>{
+  router.post('/new-author',async (req: Request, res: Response)=>{
     const {name} = req.body.params;
     console.log(req.body.params);
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
@@ -96,9 +96,39 @@ export async function registerUser(router: Router, mongoose: Mongoose){
         console.log("An error has accured: " + err);
       }
       else{
-        console.log("User registered successfuly!");
+        console.log("Author saved successfuly!");
+        res.send(author.name);
       }
     });
+  });
+}
+
+/**
+ * util function getAuthors:
+ * 
+ * returns authors' names list.
+ * @param router express router to be used
+ */
+ export async function getAuthorsNames(router: Router, mongoose: Mongoose){
+  router.get('/get-authors',async (req: Request, res: Response)=>{
+    //const {name} = req.body.params;
+    //console.log(req.body.params);
+    const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
+    console.log("connected to author model");
+    let authors = new Array<any>(); //want it to work first
+    authorModel.find({}, 'name').exec().then((result: any)=>{
+      console.log("result type is: " + typeof(result));
+      authors = result;
+      console.log(authors);
+    });
+    /* await author.save((err:any,author:Author)=>{
+      if (err){
+        console.log("An error has accured: " + err);
+      }
+      else{
+        console.log("Author saved successfuly!");
+      } */
+    res.send(authors);
   });
 }
 
@@ -112,21 +142,38 @@ export async function registerUser(router: Router, mongoose: Mongoose){
   router.post('/new-article',async (req: Request, res: Response)=>{
     const {title, author, publishDate, link} = req.body.params;
     console.log(req.body.params);
+    
+    //recieve author's id
+    const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
+    console.log("connected to author model");
+    let authorId = mongoose.Types.ObjectId;
+    authorModel.findOne({
+      params: {
+        name: author
+      }
+    }, '_id').exec().then((result: any)=>{    //should be type ObjectId but ts screams
+      console.log("result type is: " + typeof(result));
+      authorId = result;
+      console.log(authorId);
+    });
+
+    //save the article
     const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
     console.log("connected to article model");
     const article = new articleModel({
       title: title,
-      author: author,
+      _author: authorId,
       publishDate: publishDate,
       link: link
     });
     console.log("create new article named: " + article.title);
+    console.log("with author's oid: " + article._author);
     await article.save((err:any,article:Article)=>{
       if (err){
         console.log("An error has accured: " + err);
       }
       else{
-        console.log("User registered successfuly!");
+        console.log("Article saved successfuly!");
       }
     });
   });
@@ -139,11 +186,11 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * @param router express router to be used
  */
  export async function newSummary(router: Router, mongoose: Mongoose){
-  router.post('/register',async (req: Request, res: Response)=>{
+  router.post('/new-summary',async (req: Request, res: Response)=>{
     const {user, rating, likes, publishDate, article } = req.body.params;
     console.log(req.body.params);
     const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
-    console.log("connected to user model");
+    console.log("connected to summary model");
     const summary = new summaryModel({
       user: user,
       rating: rating,
@@ -157,7 +204,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
         console.log("An error has accured: " + err);
       }
       else{
-        console.log("User registered successfuly!");
+        console.log("Summary saved successfuly!");
       }
     });
   });

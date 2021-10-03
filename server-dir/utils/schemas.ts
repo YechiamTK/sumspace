@@ -1,4 +1,4 @@
-import {Mongoose} from 'mongoose';
+import {Mongoose, ObjectId} from 'mongoose';
 
 
 /***
@@ -18,7 +18,7 @@ export interface User {
 
 export interface Article {
     title : string,
-    author : Author,
+    _author : ObjectId,
     publishDate : Date,
     link : string,
     tags? : Array<Tag>
@@ -98,7 +98,7 @@ export function retrieveUserSchema(mongoose: Mongoose){
 export function retrieveArticleSchema(mongoose: Mongoose){
     const articleSchema = new mongoose.Schema<Article>({
         title : {type: String, required: true},
-        author : {type:mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
+        _author : {type:mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
         publishDate : {type: Date, required: true},
         link : {type: String, required: true},
         tags : [{type:mongoose.Schema.Types.ObjectId, ref: 'Tag'}]

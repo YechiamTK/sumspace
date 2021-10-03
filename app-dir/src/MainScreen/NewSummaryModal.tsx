@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Button, Form, Menu, Modal } from "semantic-ui-react";
+import axios from "axios";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { Button, Form, InputProps, Menu, Modal } from "semantic-ui-react";
 
 
 export const NewSummaryModal = ():JSX.Element => {
@@ -16,6 +17,28 @@ export const NewSummaryModal = ():JSX.Element => {
      */
 
     const [show, setShow] = useState(false);
+    const [authorName, setAuthorName] = useState('');
+
+    const authorInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target as unknown as InputProps; 
+        setAuthorName(target.value);
+    }
+
+    const postNewAuthor = (event: FormEvent<HTMLFormElement>) => {
+        axios.post('/new-author', {
+          params: {
+            name: authorName,
+          }
+        }).then((response)=>{
+          console.log("Received response for author named: " + response.data);
+          //props.loginAction();
+        }).catch((err)=>{
+          console.log("An Error has occured!");
+          console.log(err);
+        });
+      
+        event.preventDefault();
+    }
 
     //obviously placeholder:
     const options = [
@@ -38,14 +61,14 @@ export const NewSummaryModal = ():JSX.Element => {
                     Write a new summary!
                 </Modal.Header>
                 <Modal.Content>
-                    <Form>
-                        <Form.Input fluid label="Choose the article" />
-                        <Form.TextArea label="Write below" />
-                        <Form.Select fluid label="Choose relevant tags" options={options} />
+                    <Form id="submit-form" onSubmit={postNewAuthor}>
+                        <Form.Input fluid label="Choose the article" value={authorName} onChange={authorInputChange} />
+                        {/* <Form.TextArea label="Write below" />
+                        <Form.Select fluid label="Choose relevant tags" options={options} /> */}
                     </Form>
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button content="Post summary"/>
+                    <Button type="submit" form="submit-form" content="Post summary"/>
                 </Modal.Actions>
         </Modal>
     )

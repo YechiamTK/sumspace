@@ -8,7 +8,7 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { loadFile, loginUser, registerUser } from './utils/restful_connections';
+import { getAuthorsNames, loadFile, loginUser, newArticle, newAuthor, registerUser } from './utils/restful_connections';
 import { Mongoose } from 'mongoose';
 
 
@@ -39,6 +39,9 @@ mongoose.connect(db, options).then(async ()=>{
     //set up login screen api
     loginUser(router, mongoose);
     registerUser(router, mongoose);
+    newAuthor(router, mongoose);
+    getAuthorsNames(router, mongoose);
+    newArticle(router, mongoose);
   }
   catch(err){
     console.log(err);
