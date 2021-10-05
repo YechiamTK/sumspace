@@ -31,46 +31,48 @@ export const NewArticleModal = ():JSX.Element => {
         setArticleName(target.value);
     }
 
-    const postNewArticle = (event: FormEvent<HTMLFormElement>) => {
+    const postNewArticle = async (event: FormEvent<HTMLFormElement>) => {
 
         console.log("entered postNewArticle");
 
         //first check if author already exists
-        let authorsList = new Array<any>();     //really need to be of type Author but don't want to rely on backend types
-        axios.get('/get-authors').then((response)=>{
+        //perhaps should move this check to backend
+        let authorsList = new Array<string>();
+        await axios.get('/get-authors').then((response)=>{
             authorsList = response.data;
             console.log('authors list is: ' + authorsList);
         }).catch((err)=>{
             console.log("An Error has occured!");
             console.log(err);
-        });
-        //if not, create a new one
-        if (!(authorName in authorsList)){
-            axios.post('/new-author', {
+        }).then(async ()=>{
+            //if there's no author with that name, create a new one
+            if (!(authorsList.includes(authorName))){
+                await axios.post('/new-author', {
+                    params: {
+                    name: authorName,
+                    }
+                }).then((response)=>{
+                    console.log("Received response for author named: " + response.data);
+                }).catch((err)=>{
+                    console.log("An Error has occured!");
+                    console.log(err);
+                });
+            }
+        }).then(async ()=>{
+            //post the article with the author name
+            await axios.post('/new-article', {
                 params: {
-                name: authorName,
+                    title: articleName,
+                    author: authorName,
+                    publishDate: (new Date().toLocaleDateString()),
+                    link: "link"
                 }
             }).then((response)=>{
-                console.log("Received response for author named: " + response.data);
+                console.log("Successfully saved article named: " + response.data);
             }).catch((err)=>{
                 console.log("An Error has occured!");
                 console.log(err);
-            });
-        }
-
-        //post the article with the author name
-        axios.post('/new-article', {
-            params: {
-                title: articleName,
-                author: authorName,
-                publishDate: (new Date().toLocaleDateString()),
-                link: "link"
-            }
-        }).then((response)=>{
-            console.log("Successfully saved article named: " + response.data);
-        }).catch((err)=>{
-            console.log("An Error has occured!");
-            console.log(err);
+            })
         });
 
         //close the modal

@@ -39,9 +39,16 @@ mongoose.connect(db, options).then(async ()=>{
     //set up login screen api
     loginUser(router, mongoose);
     registerUser(router, mongoose);
+
+    //set up author api
     newAuthor(router, mongoose);
     getAuthorsNames(router, mongoose);
+   
+    //set up articles api
     newArticle(router, mongoose);
+
+    // Handles any requests that don't match the ones above
+    loadFile(router, '*', path.join(__dirname,'../app-dir/build/index.html'));
   }
   catch(err){
     console.log(err);
@@ -60,8 +67,6 @@ mongoose.connection.on('disconnected', err=>{
   console.log(err);
 });
 
-// Handles any requests that don't match the ones above
-loadFile(router, '*', path.join(__dirname,'../app-dir/build/index.html'));
 
 
 //set up app

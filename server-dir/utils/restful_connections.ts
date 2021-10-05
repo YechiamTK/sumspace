@@ -10,21 +10,6 @@ import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchem
 
 
 /**
- * util function loadFile:
- * 
- * loads up a file onto a given route. 
- * @param router express router to be used
- * @param route route to send the file to
- * @param file file to send
- */
-export async function loadFile(router: Router, route: string, file: string) {
-    router.get(route, (req, res) => {
-        res.sendFile(file);
-      });
-
-}
-
-/**
  * util function loginUser:
  * 
  * attempts to log in an existing user.
@@ -83,20 +68,21 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function newAuthor(router: Router, mongoose: Mongoose){
   router.post('/new-author',async (req: Request, res: Response)=>{
+    console.log("entered new-author");
     const {name} = req.body.params;
     console.log(req.body.params);
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
-    console.log("connected to author model");
+    console.log("new-author: connected to author model");
     const author = new authorModel({
       name: name
     });
-    console.log("create new author named: " + author.name);
+    console.log("new-author: create new author named: " + author.name);
     await author.save((err:any,author:Author)=>{
       if (err){
-        console.log("An error has accured: " + err);
+        console.log("new-author: An error has accured: " + err);
       }
       else{
-        console.log("Author saved successfuly!");
+        console.log("new-author: Author saved successfuly!");
         res.send(author.name);
       }
     });
@@ -111,24 +97,21 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function getAuthorsNames(router: Router, mongoose: Mongoose){
   router.get('/get-authors',async (req: Request, res: Response)=>{
-    //const {name} = req.body.params;
-    //console.log(req.body.params);
+    console.log("entered get-authors");
+    
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
-    console.log("connected to author model");
+    console.log("get-authors: connected to author model");
     let authors = new Array<any>(); //want it to work first
-    authorModel.find({}, 'name').exec().then((result: any)=>{
-      console.log("result type is: " + typeof(result));
-      authors = result;
-      console.log(authors);
+    await authorModel.find({}).select('name -_id').exec().then((result: Array<Author>)=>{
+      console.log("get-authors: result type is: " + typeof(result));
+      authors = result.map(({name})=>name);
+      console.log("get-authors: " + authors);
+      res.send(authors);
+  }).catch((err)=>{
+        console.log("get-authors: An error has accured: " + err);
     });
-    /* await author.save((err:any,author:Author)=>{
-      if (err){
-        console.log("An error has accured: " + err);
-      }
-      else{
-        console.log("Author saved successfuly!");
-      } */
-    res.send(authors);
+    
+    //need to insert check before send
   });
 }
 
@@ -140,40 +123,42 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function newArticle(router: Router, mongoose: Mongoose){
   router.post('/new-article',async (req: Request, res: Response)=>{
+    console.log("entered new-article");
     const {title, author, publishDate, link} = req.body.params;
-    console.log(req.body.params);
+    console.log("new-article: " + req.body.params);
     
     //recieve author's id
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
-    console.log("connected to author model");
+    console.log("new-article: connected to author model");
     let authorId = mongoose.Types.ObjectId;
-    authorModel.findOne({
+    await authorModel.findOne({
       params: {
         name: author
       }
     }, '_id').exec().then((result: any)=>{    //should be type ObjectId but ts screams
-      console.log("result type is: " + typeof(result));
+      console.log("new-article: result type is: " + typeof(result));
       authorId = result;
-      console.log(authorId);
+      console.log("new-article: " + authorId);
     });
 
     //save the article
     const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
-    console.log("connected to article model");
+    console.log("new-article: connected to article model");
     const article = new articleModel({
       title: title,
       _author: authorId,
       publishDate: publishDate,
       link: link
     });
-    console.log("create new article named: " + article.title);
-    console.log("with author's oid: " + article._author);
+    console.log("new-article: create new article named: " + article.title);
+    console.log("new-article: with author's oid: " + article._author);
     await article.save((err:any,article:Article)=>{
       if (err){
-        console.log("An error has accured: " + err);
+        console.log("new-article: An error has accured: " + err);
       }
       else{
-        console.log("Article saved successfuly!");
+        console.log("new-article: Article saved successfuly!");
+        res.send(article.title);
       }
     });
   });
@@ -208,4 +193,24 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       }
     });
   });
+}
+
+
+
+
+
+
+/**
+ * util function loadFile:
+ * 
+ * loads up a file onto a given route. 
+ * @param router express router to be used
+ * @param route route to send the file to
+ * @param file file to send
+ */
+ export async function loadFile(router: Router, route: string, file: string) {
+  router.get(route, (req, res) => {
+      res.sendFile(file);
+    });
+
 }

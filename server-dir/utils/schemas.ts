@@ -6,6 +6,7 @@ import {Mongoose, ObjectId} from 'mongoose';
  */
 
 export interface User {
+    _id? : ObjectId,
     username : string,
     firstName : string,
     lastName : string,
@@ -17,6 +18,7 @@ export interface User {
 }
 
 export interface Article {
+    _id? : ObjectId,
     title : string,
     _author : ObjectId,
     publishDate : Date,
@@ -25,6 +27,7 @@ export interface Article {
 }
 
 export interface Summary { 
+    _id? : ObjectId,
     user : User,
     comments? : Array<Comment>,
     rating? : number,
@@ -35,16 +38,19 @@ export interface Summary {
 }
 
 export interface Comment {
+    _id? : ObjectId,
     user : User,
     comments? : Array<Comment>,
     likes : number
 }
 
 export interface Tag {
+    _id? : ObjectId,
     tagName : string
 }
 
 export interface Author {
+    _id? : ObjectId,
     name : string,
     articles? : Array<Article>
 }
