@@ -165,6 +165,58 @@ export async function registerUser(router: Router, mongoose: Mongoose){
 }
 
 /**
+ * util function getAuthors:
+ * 
+ * returns authors' names list.
+ * @param router express router to be used
+ */
+ export async function getArticlesNamesAndOid(router: Router, mongoose: Mongoose){
+  router.get('/get-articles-names-oid',async (req: Request, res: Response)=>{
+    console.log("entered get-articles-names-oid");
+    
+    const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+    console.log("get-articles-names-oid: connected to article model");
+    let articles = new Array<any>(); //want it to work first
+    await articleModel.find({}).select('title').exec().then((result: Array<Article>)=>{
+      console.log("get-articles-names-oid: result type is: " + typeof(result));
+      articles = result;
+      console.log("get-articles-names-oid: " + articles);
+      res.send(articles);
+  }).catch((err)=>{
+        console.log("get-articles-names-oid: An error has accured: " + err);
+    });
+    
+    //need to insert check before send
+  });
+}
+
+/**
+ * util function getAuthors:
+ * 
+ * returns authors' names list.
+ * @param router express router to be used
+ */
+ export async function getArticlesNames(router: Router, mongoose: Mongoose){
+  router.get('/get-articles-names',async (req: Request, res: Response)=>{
+    console.log("entered get-articles");
+    
+    const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+    console.log("get-articles: connected to article model");
+    let articles = new Array<any>(); //want it to work first
+    await articleModel.find({}).select('title -_id').exec().then((result: Array<Article>)=>{
+      console.log("get-articles: result type is: " + typeof(result));
+      articles = result.map(({title})=>title);
+      console.log("get-articles: " + articles);
+      res.send(articles);
+  }).catch((err)=>{
+        console.log("get-articles: An error has accured: " + err);
+    });
+    
+    //need to insert check before send
+  });
+}
+
+/**
  * util function newSummary:
  * 
  * posts a new summary from the given user.
@@ -172,12 +224,12 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function newSummary(router: Router, mongoose: Mongoose){
   router.post('/new-summary',async (req: Request, res: Response)=>{
-    const {user, rating, likes, publishDate, article } = req.body.params;
+    const {userId, rating, likes, publishDate, article } = req.body.params;
     console.log(req.body.params);
     const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
     console.log("connected to summary model");
     const summary = new summaryModel({
-      user: user,
+      user: userId,
       rating: rating,
       likes: likes,
       publishDate: publishDate,

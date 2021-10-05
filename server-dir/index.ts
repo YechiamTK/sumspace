@@ -8,7 +8,7 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { getAuthorsNames, loadFile, loginUser, newArticle, newAuthor, registerUser } from './utils/restful_connections';
+import { getArticlesNames, getArticlesNamesAndOid, getAuthorsNames, loadFile, loginUser, newArticle, newAuthor, registerUser } from './utils/restful_connections';
 import { Mongoose } from 'mongoose';
 
 
@@ -46,7 +46,9 @@ mongoose.connect(db, options).then(async ()=>{
    
     //set up articles api
     newArticle(router, mongoose);
-
+    getArticlesNamesAndOid(router, mongoose);
+    getArticlesNames(router, mongoose);
+    
     // Handles any requests that don't match the ones above
     loadFile(router, '*', path.join(__dirname,'../app-dir/build/index.html'));
   }

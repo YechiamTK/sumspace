@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Form, InputProps, Menu, Modal } from "semantic-ui-react";
+import { Button, DropdownItemProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
 
 
 export const NewSummaryModal = ():JSX.Element => {
@@ -18,13 +18,14 @@ export const NewSummaryModal = ():JSX.Element => {
 
     const [show, setShow] = useState(false);
     const [authorName, setAuthorName] = useState('');
+    const [options, setOptions] = useState<Array<DropdownItemProps>>([]);
 
     const authorInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const target = event.target as unknown as InputProps; 
         setAuthorName(target.value);
     }
 
-    const postNewAuthor = (event: FormEvent<HTMLFormElement>) => {
+    const postNewSummary = (event: FormEvent<HTMLFormElement>) => {
         axios.post('/new-author', {
           params: {
             name: authorName,
@@ -40,12 +41,27 @@ export const NewSummaryModal = ():JSX.Element => {
         event.preventDefault();
     }
 
-    //obviously placeholder:
-    const options = [
-        { key: 'm', text: 'Male', value: 'male' },
-        { key: 'f', text: 'Female', value: 'female' },
-        { key: 'o', text: 'Other', value: 'other' },
-      ]
+    const getArticles = () => {
+        let articles = new Array<any>();
+        let options = new Array<DropdownItemProps>();
+        axios.get('/get-articles-names', {
+            params: {
+            }
+        }).then((response)=>{
+            console.log("Received response: " + response.data);
+            articles = response.data;
+            console.log("articles are: " + articles);
+            return (options);
+        }).catch((err)=>{
+            console.log("An Error has occured!");
+            console.log(err);
+        }).finally(()=>{
+            options = articles.map((v)=>({'text': v, 'value': v}));
+            console.log("options are: " + options);
+            setOptions(options);
+        });
+    }
+
 
     return(
         <Modal
@@ -61,11 +77,16 @@ export const NewSummaryModal = ():JSX.Element => {
                     Write a new summary!
                 </Modal.Header>
                 <Modal.Content>
-                    <Form id="submit-form" onSubmit={postNewAuthor}>
-                        <Form.Input fluid label="Choose the article" value={authorName} onChange={authorInputChange} />
+                    <Form id="choose-article" onSubmit={postNewSummary}>
+                        <Form.Select search scrolling onFocus={getArticles} options={options} fluid label="Choose the article"/*  onChange={authorInputChange} */ />
                         {/* <Form.TextArea label="Write below" />
                         <Form.Select fluid label="Choose relevant tags" options={options} /> */}
                     </Form>
+                    {/* <Form id="submit-form" onSubmit={postNewSummary}>
+                        <Form.Input fluid label="Choose the article" value={authorName} onChange={authorInputChange} />
+                        {/* <Form.TextArea label="Write below" />
+                        <Form.Select fluid label="Choose relevant tags" options={options} /> }
+                    </Form> */}
                 </Modal.Content>
                 <Modal.Actions>
                     <Button type="submit" form="submit-form" content="Post summary"/>
