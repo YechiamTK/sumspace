@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { Button, DropdownItemProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
+import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from "react";
+import { Button, DropdownItemProps, DropdownProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
 
 
 export const NewSummaryModal = ():JSX.Element => {
@@ -19,16 +19,30 @@ export const NewSummaryModal = ():JSX.Element => {
     const [show, setShow] = useState(false);
     const [authorName, setAuthorName] = useState('');
     const [options, setOptions] = useState<Array<DropdownItemProps>>([]);
+    const [selectedArticle, setSelectedArticle] = useState('');
+    const [summaryText, setSummaryText] = useState('');
 
-    const authorInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const summaryTextInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         const target = event.target as unknown as InputProps; 
-        setAuthorName(target.value);
+        setSummaryText(target.value);
+    }
+
+    const selectedArticleInputChange = (event: SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        //const target = event.target as unknown as InputProps; 
+        setSelectedArticle(data.value?.toString() || '');
+        console.log(selectedArticle);
     }
 
     const postNewSummary = (event: FormEvent<HTMLFormElement>) => {
-        axios.post('/new-author', {
+        console.log("entered postNewSummary");
+        axios.post('/new-summary', {
           params: {
-            name: authorName,
+            userId: "61537e2168a17a4c191c952d",     //hardcoded for now until I save the user's credentials (TODO!)
+            summaryText: summaryText,
+            rating: 0,
+            likes: 0,
+            publishDate: new Date().toLocaleDateString(),
+            article: selectedArticle
           }
         }).then((response)=>{
           console.log("Received response for author named: " + response.data);
@@ -38,6 +52,7 @@ export const NewSummaryModal = ():JSX.Element => {
           console.log(err);
         });
       
+        setShow(false);
         event.preventDefault();
     }
 
@@ -66,7 +81,7 @@ export const NewSummaryModal = ():JSX.Element => {
     return(
         <Modal
             onClose={()=>setShow(false)}
-            onOpen={()=>{setShow(true)}}
+            onOpen={()=>{setShow(true), setSelectedArticle(''), setSummaryText('')}}
             open={show}
             trigger={
                 <Menu.Item name="newpost" as='a'>
@@ -77,10 +92,10 @@ export const NewSummaryModal = ():JSX.Element => {
                     Write a new summary!
                 </Modal.Header>
                 <Modal.Content>
-                    <Form id="choose-article" onSubmit={postNewSummary}>
-                        <Form.Select search scrolling onFocus={getArticles} options={options} fluid label="Choose the article"/*  onChange={authorInputChange} */ />
-                        {/* <Form.TextArea label="Write below" />
-                        <Form.Select fluid label="Choose relevant tags" options={options} /> */}
+                    <Form id="submit-summary" onSubmit={postNewSummary}>
+                        <Form.Select search scrolling onFocus={getArticles} options={options} fluid label="Choose the article" value={selectedArticle}  onChange={selectedArticleInputChange} />
+                        <Form.TextArea label="Write below" value={summaryText} onChange={summaryTextInputChange} />
+                        {/* <Form.Select fluid label="Choose relevant tags" options={options} /> */}
                     </Form>
                     {/* <Form id="submit-form" onSubmit={postNewSummary}>
                         <Form.Input fluid label="Choose the article" value={authorName} onChange={authorInputChange} />
@@ -89,7 +104,7 @@ export const NewSummaryModal = ():JSX.Element => {
                     </Form> */}
                 </Modal.Content>
                 <Modal.Actions>
-                    <Button type="submit" form="submit-form" content="Post summary"/>
+                    <Button type="submit" form="submit-summary" content="Post summary"/>
                 </Modal.Actions>
         </Modal>
     )

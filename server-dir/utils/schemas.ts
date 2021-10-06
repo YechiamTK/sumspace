@@ -29,6 +29,7 @@ export interface Article {
 export interface Summary { 
     _id? : ObjectId,
     user : User,
+    summary: string,
     comments? : Array<Comment>,
     rating? : number,
     likes : number,
@@ -132,6 +133,7 @@ export function retrieveArticleSchema(mongoose: Mongoose){
 export function retrieveSummarySchema(mongoose: Mongoose){
     const summarySchema = new mongoose.Schema({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+        summary: {type: String, required: true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
         rating : {type: Number, required: true},
         likes : {type: Number, required: true},

@@ -224,25 +224,41 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function newSummary(router: Router, mongoose: Mongoose){
   router.post('/new-summary',async (req: Request, res: Response)=>{
-    const {userId, rating, likes, publishDate, article } = req.body.params;
-    console.log(req.body.params);
-    const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
-    console.log("connected to summary model");
-    const summary = new summaryModel({
-      user: userId,
-      rating: rating,
-      likes: likes,
-      publishDate: publishDate,
-      article: article
-    });
-    console.log("create new summary from user: " + summary.user);
-    await summary.save((err:any,summary:Summary)=>{
-      if (err){
-        console.log("An error has accured: " + err);
-      }
-      else{
-        console.log("Summary saved successfuly!");
-      }
+    const {userId, summaryText, rating, likes, publishDate, article } = req.body.params;
+    console.log("new-summary: " + req.body.params);
+
+    //get article Oid
+    const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+    console.log("new-summary: connected to article model");
+    let articleOid = mongoose.Types.ObjectId;
+    await articleModel.findOne({title: article}).select('_id').exec().then((result: typeof mongoose.Types.ObjectId)=>{
+      articleOid = result;
+    }).then(async ()=>{
+      //afterwards, we can proceed to save the summary
+      const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+      console.log("new-summary: connected to summary model");
+      const summary = new summaryModel({
+        user: userId,
+        summary: summaryText,
+        rating: rating,
+        likes: likes,
+        publishDate: publishDate,
+        article: articleOid
+      });
+      //populate just to print the related article's name
+      summaryModel.populate(summary,{path: 'article'}, ((err, summary)=>{
+        if (err) console.log("new-summary: " + err);
+        else console.log("new-summary: create new summary for article (title): " + summary.article.title);
+      }));
+      //and finally save the summary
+      await summary.save((err:any,summary:Summary)=>{
+        if (err){
+          console.log("new-summary: An error has accured: " + err);
+        }
+        else{
+          console.log("new-summary: Summary saved successfuly!");
+        }
+      });
     });
   });
 }
