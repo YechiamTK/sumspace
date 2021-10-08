@@ -5,8 +5,8 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { Mongoose, ObjectId } from 'mongoose';
-import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema } from './schemas';
+import { Mongoose } from 'mongoose';
+import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema, retrieveTagSchema, Tag } from './schemas';
 
 
 /**
@@ -124,7 +124,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  export async function newArticle(router: Router, mongoose: Mongoose){
   router.post('/new-article',async (req: Request, res: Response)=>{
     console.log("entered new-article");
-    const {title, author, publishDate, link} = req.body.params;
+    const {title, author, publishDate, link, tags} = req.body.params;
     console.log("new-article: " + req.body.params);
     
     //recieve author's id
@@ -148,7 +148,8 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       title: title,
       _author: authorId,
       publishDate: publishDate,
-      link: link
+      link: link,
+      tags: tags  //by Oid
     });
     console.log("new-article: create new article named: " + article.title);
     console.log("new-article: with author's oid: " + article._author);
@@ -263,6 +264,68 @@ export async function registerUser(router: Router, mongoose: Mongoose){
   });
 }
 
+/**
+ * util function findTagsOid:
+ * 
+ * searches for the requested tags and returns their oids.
+ * @param router express router to be used
+ */
+ export async function findTagsOid(router: Router, mongoose: Mongoose){
+  router.get('/find-tags-oid',async (req: Request, res: Response)=>{
+    console.log("entered find-tags-oid");
+    const {requestedTags} = req.body.params;
+    console.log(requestedTags);
+    const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
+    console.log("find-tags-oid: connected to tag model");
+    //search the tags, error if not all returns:
+    await tagModel.find({tagName: requestedTags}).select('_id').exec().then(async (result: Tag[])=>{
+      //const unsavedTags = tags.
+      const foundTags = result.map((tag: any)=>new tagModel({tagName: tag}));
+      if (foundTags && (requestedTags.length != foundTags.length)) {
+        console.log("find-tags-oid: Not all tags found!");
+      }
+      else {
+        const sendTags = foundTags.map(({_id})=>_id);
+        console.log("find-tags-oid: returning tags' oids: " + sendTags);
+        res.send(sendTags);
+      }
+    })
+  });
+}
+
+/**
+ * util function newTags:
+ * 
+ * registers new tags.
+ * @param router express router to be used
+ */
+ export async function newTags(router: Router, mongoose: Mongoose){
+  router.post('/new-tags',async (req: Request, res: Response)=>{
+    console.log("entered new-tags");
+    const {tags} = req.body.params;
+    console.log(tags);
+    const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
+    console.log("new-tags: connected to tag model");
+    //insert only the new tags using 'upsert':
+    await tagModel.find({tagName: tags}).select('tagName -_id').exec().then(async (result: Tag[])=>{
+      //const unsavedTags = tags.
+      console.log('found tags: ' + result.toString());
+      const newTags = tags.map((tag: any)=>new tagModel({tagName: tag}));
+      console.log('new tags as tag model: ' + newTags);
+      console.log('new tags as tag model: ' + newTags.map((tag: any)=>tag.toString()));
+      await tagModel.updateMany(result, {$setOnInsert: newTags} ,{upsert: true, new: true}, (err:any, res:any)=>{
+        if (err){
+          console.log("new-tags: An error has accured: " + err);
+          res.send('error');
+        }
+        else{
+          console.log("new-tags: Tags saved successfuly!");
+          res.send('success');
+        }
+      });
+    })
+  });
+}
 
 
 

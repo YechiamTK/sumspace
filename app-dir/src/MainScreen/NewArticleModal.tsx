@@ -19,6 +19,7 @@ export const NewArticleModal = ():JSX.Element => {
     const [show, setShow] = useState(false);
     const [authorName, setAuthorName] = useState('');
     const [articleName, setArticleName] = useState('');
+    const [tags, setTags] = useState('');
 
     //handle input change
     const authorInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +30,11 @@ export const NewArticleModal = ():JSX.Element => {
     const articleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const target = event.target as unknown as InputProps; 
         setArticleName(target.value);
+    }
+
+    const tagsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target as unknown as InputProps; 
+        setTags(target.value);
     }
 
     const postNewArticle = async (event: FormEvent<HTMLFormElement>) => {
@@ -59,20 +65,39 @@ export const NewArticleModal = ():JSX.Element => {
                 });
             }
         }).then(async ()=>{
-            //post the article with the author name
-            await axios.post('/new-article', {
-                params: {
-                    title: articleName,
-                    author: authorName,
-                    publishDate: (new Date().toLocaleDateString()),
-                    link: "link"
+            //post the article with the author name and relevant tags
+
+            //first replace tags' names with their oids
+            const splitTags = tags.split(',');
+            console.log('tags are: ' + splitTags);
+            await axios.post('/new-tags', {
+                params:
+                    {tags: splitTags}
+            }).then(async (response)=>{
+                if (response.data == 'success'){
+                    await axios.get('/find-tags-oid', {
+                        params: {
+                            requestedTags: splitTags
+                        }
+                    }).then(async (response)=>{
+                        await axios.post('/new-article', {
+                            params: {
+                                title: articleName,
+                                author: authorName,
+                                publishDate: (new Date().toLocaleDateString()),
+                                link: "link",
+                                tags: response.data     //should be tags' oids
+                            }
+                        }).then((response)=>{
+                            console.log("Successfully saved article named: " + response.data);
+                        }).catch((err)=>{
+                            console.log("An Error has occured!");
+                            console.log(err);
+                        })
+                    })
                 }
-            }).then((response)=>{
-                console.log("Successfully saved article named: " + response.data);
-            }).catch((err)=>{
-                console.log("An Error has occured!");
-                console.log(err);
-            })
+                else console.log("error occured while inserting tags");
+            });
         });
 
         //close the modal
@@ -99,6 +124,7 @@ export const NewArticleModal = ():JSX.Element => {
                     <Form id="new-article-form" onSubmit={postNewArticle}>
                         <Form.Input fluid label="What is the author name?" value={authorName} onChange={authorInputChange} />
                         <Form.Input fluid label="What is the article's title?" value={articleName} onChange={articleInputChange} />
+                        <Form.Input fluid label="Choose relevant tags" value={tags} onChange={tagsInputChange} />
                         {/* <Form.TextArea label="Write below" />
                         <Form.Select fluid label="Choose relevant tags" options={options} /> */}
                     </Form>
