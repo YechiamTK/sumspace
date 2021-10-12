@@ -69,16 +69,16 @@ export const NewArticleModal = ():JSX.Element => {
 
             //first replace tags' names with their oids
             const splitTags = tags.split(',');
-            console.log('tags are: ' + splitTags);
+            console.log('tags are: ' + splitTags + typeof(splitTags));
             await axios.post('/new-tags', {
                 params:
                     {tags: splitTags}
             }).then(async (response)=>{
                 if (response.data == 'success'){
-                    await axios.get('/find-tags-oid', {
-                        params: {
-                            requestedTags: splitTags
-                        }
+                    console.log(splitTags);
+                    await axios.post('/find-tags-oid', {
+                        params: 
+                            {requestedTags: splitTags}
                     }).then(async (response)=>{
                         await axios.post('/new-article', {
                             params: {

@@ -271,14 +271,14 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * @param router express router to be used
  */
  export async function findTagsOid(router: Router, mongoose: Mongoose){
-  router.get('/find-tags-oid',async (req: Request, res: Response)=>{
+  router.post('/find-tags-oid',async (req: Request, res: Response)=>{
     console.log("entered find-tags-oid");
     const {requestedTags} = req.body.params;
     console.log(requestedTags);
     const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
     console.log("find-tags-oid: connected to tag model");
     //search the tags, error if not all returns:
-    await tagModel.find({tagName: requestedTags}).select('_id').exec().then(async (result: Tag[])=>{
+    await tagModel.find({"tagName": requestedTags}).select('_id').exec().then(async (result: Tag[])=>{
       //const unsavedTags = tags.
       const foundTags = result.map((tag: any)=>new tagModel({tagName: tag}));
       if (foundTags && (requestedTags.length != foundTags.length)) {
@@ -300,30 +300,36 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * @param router express router to be used
  */
  export async function newTags(router: Router, mongoose: Mongoose){
-  router.post('/new-tags',async (req: Request, res: Response)=>{
+  router.post('/new-tags',async (req: Request, response: Response)=>{
     console.log("entered new-tags");
     const {tags} = req.body.params;
-    console.log(tags);
+    console.log(tags, typeof(tags));
     const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
     console.log("new-tags: connected to tag model");
     //insert only the new tags using 'upsert':
-    await tagModel.find({tagName: tags}).select('tagName -_id').exec().then(async (result: Tag[])=>{
+    await tagModel.find({"tagName": tags}).select('tagName -_id').exec().then(async (result: Tag[])=>{
       //const unsavedTags = tags.
-      console.log('found tags: ' + result.toString());
+      console.log('new-tags: found tags: ' + result);
       const newTags = tags.map((tag: any)=>new tagModel({tagName: tag}));
-      console.log('new tags as tag model: ' + newTags);
-      console.log('new tags as tag model: ' + newTags.map((tag: any)=>tag.toString()));
-      await tagModel.updateMany(result, {$setOnInsert: newTags} ,{upsert: true, new: true}, (err:any, res:any)=>{
-        if (err){
+      console.log('new-tags: new tags as tag model: ' + newTags);
+      console.log('new-tags: new tags as tag model: ' + newTags.map((tag: any)=>tag.toString()));
+      //await tagModel.updateMany({}, {$setOnInsert: newTags} ,{upsert: true, new: true}, (err:any, res:any)=>{
+      let bulk = tagModel.collection.initializeUnorderedBulkOp();
+      newTags.forEach((tag:any)=>bulk.insert(tag));
+      await bulk.execute({}, (err:any, res:any)=>{
+      //await tagModel.insertMany(newTags, {}, (err: any, res: any)=>{
+        if (err && !(err.code === 11000)){
           console.log("new-tags: An error has accured: " + err);
-          res.send('error');
+          response.send('error');
         }
         else{
           console.log("new-tags: Tags saved successfuly!");
-          res.send('success');
+          response.send('success');
         }
       });
-    })
+    }).catch((err)=>{
+      console.log("new-tags: error occured: " + err);
+    });
   });
 }
 

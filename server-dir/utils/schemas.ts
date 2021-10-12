@@ -181,7 +181,7 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  */
  export function retrieveTagSchema(mongoose: Mongoose){
     const tagSchema = new mongoose.Schema({
-        tagName : {type: String, required: true}
+        tagName : {type: String, required: true, index: {unique: true, dropDups: true}}
     });
 
     return (tagSchema);
