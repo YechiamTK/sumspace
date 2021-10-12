@@ -110,7 +110,7 @@ export const NewArticleModal = ():JSX.Element => {
     return(
         <Modal
             onClose={()=>setShow(false)}
-            onOpen={()=>{setShow(true)}}
+            onOpen={()=>{setShow(true), setArticleName(''), setAuthorName(''), setTags('')}}
             open={show}
             trigger={
                 <Menu.Item name="newarticle" as='a'>
@@ -118,7 +118,7 @@ export const NewArticleModal = ():JSX.Element => {
                 </Menu.Item>}
             closeIcon>
                 <Modal.Header>
-                    Write a new summary!
+                    Add a new article
                 </Modal.Header>
                 <Modal.Content>
                     <Form id="new-article-form" onSubmit={postNewArticle}>
