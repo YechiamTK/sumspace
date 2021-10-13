@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Feed } from "semantic-ui-react";
+import { Button, Feed, Visibility } from "semantic-ui-react";
 
+const SKIP = 10;
+const AMOUNT = 10;
 
 interface SummaryJson {
     _id : number,
@@ -41,8 +43,11 @@ export const MainView = (props: MainViewProps):JSX.Element => {
     // For now everything below is placeholder.
     
     const [summaries, setSummaries] = useState<Array<SummaryJson>>([]);
-    const [skip, setSkip] = useState(5);
-    const [reload, setReload] = useState(false);
+    const [skip, setSkip] = useState(SKIP);
+    const [loadCount, setLoad] = useState(0);
+    const [reloadCount, setReload] = useState(0);
+    //(will be used later?) for loading content dynamically via scroll:
+    //const [loadContent, setLoadContent] = useState(false);
     
     const retrieveSummaries = async (amount: number | boolean, skip: number) => {
         await axios.post('/get-summaries', {
@@ -52,9 +57,9 @@ export const MainView = (props: MainViewProps):JSX.Element => {
             skip: skip
             }
         }).then((response)=>{
-            if (response.data){
-                if (summaries.length > 0){
-                    setSummaries([...response.data, ...summaries]);
+            if (response.data != "none"){
+                if (summaries.length > 0 && skip > 0){
+                    setSummaries([...summaries, ...response.data]);
                 }
                 else{
                     setSummaries(response.data);
@@ -68,19 +73,35 @@ export const MainView = (props: MainViewProps):JSX.Element => {
         });
     }
 
+
+    //I REALLY dislike this solution, but it is what it is
+
     useEffect(()=>{
-        setSummaries([]);
-        setSkip(5);
-        retrieveSummaries(5,0);
-        //props.triggerUpdate();
-    }, [!props.updateSummaries]);
+        retrieveSummaries(SKIP,0);
+        setSkip(SKIP);
+    },[reloadCount]);
+
+    useEffect(()=>{
+        if (summaries.length > 1){
+            retrieveSummaries(AMOUNT,skip + 1);
+            setSkip(skip => skip + SKIP);
+        }
+    }, [loadCount]);
 
     const date = new Date();
     return(
+        //ALL THIS VISIBILITY BS - NOT NOW OK?!
+
+       /*  <Visibility continuous={true} once={false} onPassed={{
+            '0%':()=>{(loadContent ? setLoadContent(false): undefined), (loadContent ? console.log('visible') : undefined)},
+            '30%':()=>{(!loadContent ? setLoadContent(true): undefined), (!loadContent ? console.log('invisible') : undefined)}}} */
+                    /* onBottomVisibleReverse={()=>{setLoadContent(false),console.log('invisible')}}> */
+
         <Feed size="large">
-            <Button onClick={()=>{retrieveSummaries(5,skip+1), setSkip(skip + 5)}} label="load" />
-            {/* <Button onClick={()=>{new Promise(()=>{setSummaries([])}).then(()=>{retrieveSummaries(5,0)}).then(()=>{setSkip(5)}).then(()=>{})}} label="reload" />
-             */}
+            {/* <Button onClick={()=>{setLoad(loadCount=>loadCount+1)}} label="load" />
+            <Button onClick={()=>{setReload(reloadCount=>reloadCount+1)}} label="reload" /> */}
+            <Button onClick={()=>{setReload(reloadCount=>reloadCount+1)}} label="reload"/>
+            
             {
                 summaries.map((summary)=>{
                     return (<Feed.Event key={summary._id}>
@@ -93,86 +114,12 @@ export const MainView = (props: MainViewProps):JSX.Element => {
                     </Feed.Event>)
                     })
             }
+            {/* {loadContent ?  */}
+            <Button onClick={()=>{setLoad(loadCount=>loadCount+1)}} label="load"/>
+                {/* :
+                <></>} */}
             
-            <Feed.Event>
-                <Feed.Label image={"./img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"./img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event><Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
-            <Feed.Event>
-                <Feed.Label image={"../img/profile.jpg"}/>
-                <Feed.Content
-                    date={date.toLocaleTimeString()}
-                    summary="New summary published"
-                    extraText="New summary x for article y"
-                />
-            </Feed.Event>
         </Feed>
+        /* </Visibility> */
     )
 }

@@ -303,6 +303,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       }
       else {
         console.log("get-summaries: no matching summaries found");
+        res.send("none");
       }
     }).catch((err)=>{
       console.log("get-summaries: an error occured: "+ err);
