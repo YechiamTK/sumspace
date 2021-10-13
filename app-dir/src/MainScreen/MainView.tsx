@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Feed, Visibility } from "semantic-ui-react";
+import { Button, Feed, Icon, Visibility } from "semantic-ui-react";
 
 const SKIP = 10;
 const AMOUNT = 10;
@@ -100,7 +100,10 @@ export const MainView = (props: MainViewProps):JSX.Element => {
         <Feed size="large">
             {/* <Button onClick={()=>{setLoad(loadCount=>loadCount+1)}} label="load" />
             <Button onClick={()=>{setReload(reloadCount=>reloadCount+1)}} label="reload" /> */}
-            <Button onClick={()=>{setReload(reloadCount=>reloadCount+1)}} label="reload"/>
+            <Button animated='vertical' onClick={()=>{setReload(reloadCount=>reloadCount+1)}}>
+                <Button.Content visible>Reload</Button.Content>
+                <Button.Content hidden><Icon name="sync"/></Button.Content>
+            </Button>
             
             {
                 summaries.map((summary)=>{
@@ -115,7 +118,10 @@ export const MainView = (props: MainViewProps):JSX.Element => {
                     })
             }
             {/* {loadContent ?  */}
-            <Button onClick={()=>{setLoad(loadCount=>loadCount+1)}} label="load"/>
+            <Button animated='vertical' onClick={()=>{setLoad(loadCount=>loadCount+1)}}>
+                <Button.Content visible>Load</Button.Content>
+                <Button.Content hidden><Icon name="chevron down"/></Button.Content>
+            </Button>
                 {/* :
                 <></>} */}
             
