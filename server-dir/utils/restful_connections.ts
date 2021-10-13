@@ -5,7 +5,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { Mongoose } from 'mongoose';
+import { LeanDocument, Mongoose } from 'mongoose';
 import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema, retrieveTagSchema, Tag } from './schemas';
 
 
@@ -260,6 +260,52 @@ export async function registerUser(router: Router, mongoose: Mongoose){
           console.log("new-summary: Summary saved successfuly!");
         }
       });
+    });
+  });
+}
+
+/**
+ * util function getSummaries:
+ * 
+ * retrieves summaries of a specific amount with skip.
+ * 
+ * NOTE: amount and skip MUST BE PASSED.
+ * 
+ * 
+ * @param router express router to be used
+ * @param mongoose mongoose object
+ * @param amount pass to req.body.params desired
+ * amount of summaries to pull. 
+ * 
+ * Pass `false` for all summaries.
+ * @param skip pass to req.body.params desired
+ * skip count. 
+ * 
+ * Pass 0 for no skip.
+ * 
+ * @returns stringified summaries:
+ * 
+ * [{_id, user, summary, comments, rating,
+ * likes, publishDate, article, tags}]
+ */
+ export async function getSummaries(router: Router, mongoose: Mongoose){
+  router.post('/get-summaries',async (req: Request, res: Response)=>{
+    const { amount, skip } = req.body.params;
+    // console.log("new-summary: " + req.body.params);
+    console.log("entered get-summaries");
+
+    const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+    await summaryModel.find().sort({_id: -1}).skip(skip || 0)
+      .limit(amount || summaryModel.collection.estimatedDocumentCount()).lean().exec().then((result: LeanDocument<Summary>[])=>{
+      if (result.length > 0) {
+        console.log("get-summaries: found summaries! sending them now");
+        res.send(JSON.stringify(result));
+      }
+      else {
+        console.log("get-summaries: no matching summaries found");
+      }
+    }).catch((err)=>{
+      console.log("get-summaries: an error occured: "+ err);
     });
   });
 }

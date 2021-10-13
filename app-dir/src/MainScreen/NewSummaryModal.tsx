@@ -3,7 +3,11 @@ import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from "react";
 import { Button, DropdownItemProps, DropdownProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
 
 
-export const NewSummaryModal = ():JSX.Element => {
+type SummaryModalProps = {
+    triggerUpdate: () => void
+}
+
+export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
     
     /**Need to do:
      * 1. Better form -
@@ -17,7 +21,6 @@ export const NewSummaryModal = ():JSX.Element => {
      */
 
     const [show, setShow] = useState(false);
-    const [authorName, setAuthorName] = useState('');
     const [options, setOptions] = useState<Array<DropdownItemProps>>([]);
     const [selectedArticle, setSelectedArticle] = useState('');
     const [summaryText, setSummaryText] = useState('');
@@ -52,6 +55,7 @@ export const NewSummaryModal = ():JSX.Element => {
           console.log(err);
         });
       
+        props.triggerUpdate();
         setShow(false);
         event.preventDefault();
     }

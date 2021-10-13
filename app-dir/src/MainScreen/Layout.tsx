@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Container, Grid } from "semantic-ui-react";
 import { MainView } from "./MainView";
 import { SidebarLeft } from "./SideBarLeft";
@@ -8,6 +8,8 @@ import { TopBar } from "./TopBar";
 
 export const Layout = ():JSX.Element => {
 
+    const [triggerUpdate, setTriggerUpdate] = useState(false);
+
     return (
         <Container fluid>
             <Grid.Row>
@@ -15,10 +17,10 @@ export const Layout = ():JSX.Element => {
             </Grid.Row>
             <Grid columns={3} style={{position: 'relative', top: '13vh'}}>
                 <Grid.Column width={4}>
-                    <SidebarLeft />
+                    <SidebarLeft triggerUpdate={()=>{setTriggerUpdate(true)}} />
                 </Grid.Column>
                 <Grid.Column width={8}>
-                    <MainView />
+                    <MainView updateSummaries={triggerUpdate} triggerUpdate={()=>{setTriggerUpdate(false)}}/>
                 </Grid.Column>
                 <Grid.Column width={4}>
                     <SidebarRight />
