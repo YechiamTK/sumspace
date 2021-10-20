@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from "react";
 import { Button, DropdownItemProps, DropdownProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
+import { useUserContext } from "../Context/Store";
 
 
 type SummaryModalProps = {
@@ -24,6 +25,7 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
     const [options, setOptions] = useState<Array<DropdownItemProps>>([]);
     const [selectedArticle, setSelectedArticle] = useState('');
     const [summaryText, setSummaryText] = useState('');
+    const { state: {user} } = useUserContext();
 
     const summaryTextInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         const target = event.target as unknown as InputProps; 
@@ -40,7 +42,7 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
         console.log("entered postNewSummary");
         axios.post('/new-summary', {
           params: {
-            userId: "61537e2168a17a4c191c952d",     //hardcoded for now until I save the user's credentials (TODO!)
+            userId: user._id,
             summaryText: summaryText,
             rating: 0,
             likes: 0,
@@ -49,7 +51,6 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
           }
         }).then((response)=>{
           console.log("Received response for author named: " + response.data);
-          //props.loginAction();
         }).catch((err)=>{
           console.log("An Error has occured!");
           console.log(err);

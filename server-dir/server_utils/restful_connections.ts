@@ -5,8 +5,9 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { LeanDocument, Mongoose } from 'mongoose';
-import { User, retrieveUserSchema, Article, Author, Summary, retrieveAuthorSchema, retrieveSummarySchema, retrieveArticleSchema, retrieveTagSchema, Tag } from './schemas';
+import { LeanDocument, Mongoose, ObjectId } from 'mongoose';
+import { UserBE, ArticleBE, AuthorBE, SummaryBE, TagBE,
+  retrieveAuthorSchema, retrieveUserSchema, retrieveSummarySchema, retrieveArticleSchema, retrieveTagSchema } from './schemas';
 
 
 /**
@@ -20,9 +21,9 @@ export async function loginUser(router: Router, mongoose: Mongoose){
     console.log('Entered login process!');  //debug
     const {username, password} = req.body.params;
     const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
-    await userModel.findOne({'username': username, 'password': password}).exec().then((result: User)=>{
+    await userModel.findOne({'username': username, 'password': password}).lean().exec().then((result: LeanDocument<UserBE>)=>{
       console.log('User ' + result.username + ' found!');
-      res.send(result.username);
+      res.send(JSON.stringify(result));
     });/* .catch(exception){
       console.log("An Error has occured!");
       console.log(exception);
@@ -49,7 +50,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       password: password
     });
     console.log("create new user named: " + newUser.username);
-    await newUser.save((err:any,user:User)=>{
+    await newUser.save((err:any,user:UserBE)=>{
       if (err){
         console.log("An error has accured: " + err);
       }
@@ -77,7 +78,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       name: name
     });
     console.log("new-author: create new author named: " + author.name);
-    await author.save((err:any,author:Author)=>{
+    await author.save((err:any,author:AuthorBE)=>{
       if (err){
         console.log("new-author: An error has accured: " + err);
       }
@@ -102,7 +103,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
     console.log("get-authors: connected to author model");
     let authors = new Array<any>(); //want it to work first
-    await authorModel.find({}).select('name -_id').exec().then((result: Array<Author>)=>{
+    await authorModel.find({}).select('name -_id').exec().then((result: Array<AuthorBE>)=>{
       console.log("get-authors: result type is: " + typeof(result));
       authors = result.map(({name})=>name);
       console.log("get-authors: " + authors);
@@ -141,6 +142,15 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       console.log("new-article: " + authorId);
     });
 
+    //receive the tags' ids
+    /* const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
+    console.log("new-article: connected to tag model");
+    let tagsIds = new Array<ObjectId | undefined>();
+    await tagModel.find({tagName: tags}).select('_id').exec().then((response: TagBE[])=>{
+      response.forEach(tag=>{tagsIds.push(tag._id)});
+    })
+    console.log(tagsIds); */
+
     //save the article
     const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
     console.log("new-article: connected to article model");
@@ -153,7 +163,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     });
     console.log("new-article: create new article named: " + article.title);
     console.log("new-article: with author's oid: " + article._author);
-    await article.save((err:any,article:Article)=>{
+    await article.save((err:any,article:ArticleBE)=>{
       if (err){
         console.log("new-article: An error has accured: " + err);
       }
@@ -178,7 +188,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
     console.log("get-articles-names-oid: connected to article model");
     let articles = new Array<any>(); //want it to work first
-    await articleModel.find({}).select('title').exec().then((result: Array<Article>)=>{
+    await articleModel.find({}).select('title').exec().then((result: Array<ArticleBE>)=>{
       console.log("get-articles-names-oid: result type is: " + typeof(result));
       articles = result;
       console.log("get-articles-names-oid: " + articles);
@@ -204,7 +214,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
     console.log("get-articles: connected to article model");
     let articles = new Array<any>(); //want it to work first
-    await articleModel.find({}).select('title -_id').exec().then((result: Array<Article>)=>{
+    await articleModel.find({}).select('title -_id').exec().then((result: Array<ArticleBE>)=>{
       console.log("get-articles: result type is: " + typeof(result));
       articles = result.map(({title})=>title);
       console.log("get-articles: " + articles);
@@ -252,7 +262,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
         else console.log("new-summary: create new summary for article (title): " + summary.article.title);
       }));
       //and finally save the summary
-      await summary.save((err:any,summary:Summary)=>{
+      await summary.save((err:any,summary:SummaryBE)=>{
         if (err){
           console.log("new-summary: An error has accured: " + err);
         }
@@ -274,6 +284,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * 
  * @param router express router to be used
  * @param mongoose mongoose object
+ * @param id logged user's id
  * @param amount pass to req.body.params desired
  * amount of summaries to pull. 
  * 
@@ -290,13 +301,47 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function getSummaries(router: Router, mongoose: Mongoose){
   router.post('/get-summaries',async (req: Request, res: Response)=>{
-    const { amount, skip } = req.body.params;
+    const { id, amount, skip }:{id:number, amount: number, skip:number} = req.body.params;
     // console.log("new-summary: " + req.body.params);
     console.log("entered get-summaries");
 
+    let userId = new mongoose.Types.ObjectId(id);
+    const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
     const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
-    await summaryModel.find().sort({_id: -1}).skip(skip || 0)
-      .limit(amount || summaryModel.collection.estimatedDocumentCount()).lean().exec().then((result: LeanDocument<Summary>[])=>{
+    //let query = {};
+    //user.followUser.summaries
+
+    //explanation:
+    //first, first the user and select its followed authors, users and tags
+    //then, find the summaries associated with those authors, users or tags
+    //question - also provide the user's posts?
+    //send those summaries back to the app
+    await userModel.findOne({_id: userId}).select('followedAuthors followedUsers followedTags -_id')
+          .exec().then(async (response:UserBE)=>{
+            console.log(response);
+            //TODO: need to add author in summary model as well; perhaps should rethink a bit about the connections
+            await summaryModel.find({user: response.followedUsers, tags: response.followedTags}).sort({_id: -1})
+                  .skip(skip || 0).limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())
+                  .lean().exec().then((result: LeanDocument<SummaryBE>[])=>{
+                    console.log(result[0]);
+                    if (result.length > 0) {
+                      console.log("get-summaries: found summaries! sending them now");
+                      res.send(JSON.stringify(result));
+                    }
+                    else {
+                      console.log("get-summaries: no matching summaries found");
+                      res.send("none");
+                    }
+              }).catch((err)=>{
+                console.log("get-summaries: an error occured: "+ err);
+            });
+      }).catch((err)=>{
+        console.log("get-summaries: an error occured: "+ err);
+    });
+/* 
+    await summaryModel.find({"user": userId}).sort({_id: -1}).skip(skip || 0)
+      .limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())  //this might potentially not work with valueOf(), should test
+      .lean().exec().then((result: LeanDocument<SummaryBE>[])=>{
       if (result.length > 0) {
         console.log("get-summaries: found summaries! sending them now");
         res.send(JSON.stringify(result));
@@ -307,7 +352,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       }
     }).catch((err)=>{
       console.log("get-summaries: an error occured: "+ err);
-    });
+    }); */
   });
 }
 
@@ -325,7 +370,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
     console.log("find-tags-oid: connected to tag model");
     //search the tags, error if not all returns:
-    await tagModel.find({"tagName": requestedTags}).select('_id').exec().then(async (result: Tag[])=>{
+    await tagModel.find({"tagName": requestedTags}).select('_id').exec().then(async (result: TagBE[])=>{
       //const unsavedTags = tags.
       const foundTags = result.map((tag: any)=>new tagModel({tagName: tag}));
       if (foundTags && (requestedTags.length != foundTags.length)) {
@@ -354,7 +399,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
     console.log("new-tags: connected to tag model");
     //insert only the new tags using 'upsert':
-    await tagModel.find({"tagName": tags}).select('tagName -_id').exec().then(async (result: Tag[])=>{
+    await tagModel.find({"tagName": tags}).select('tagName -_id').exec().then(async (result: TagBE[])=>{
       //const unsavedTags = tags.
       console.log('new-tags: found tags: ' + result);
       const newTags = tags.map((tag: any)=>new tagModel({tagName: tag}));

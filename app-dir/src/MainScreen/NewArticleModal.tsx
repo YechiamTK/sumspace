@@ -80,6 +80,7 @@ export const NewArticleModal = ():JSX.Element => {
                         params: 
                             {requestedTags: splitTags}
                     }).then(async (response)=>{
+                        console.log(response.data);
                         await axios.post('/new-article', {
                             params: {
                                 title: articleName,

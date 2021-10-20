@@ -1,6 +1,7 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Button, ButtonProps, Form, Header, InputProps } from 'semantic-ui-react';
 import axios from 'axios';
+import {useUserContext} from '../Context/Store';
 
 type loginViewProps = {
   viewChange: (event: React.MouseEvent<HTMLButtonElement>, data: ButtonProps) => void,
@@ -11,6 +12,7 @@ type loginViewProps = {
 const LoginView = (props : loginViewProps):JSX.Element => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const {state: {user}, dispatch} = useUserContext();
 
   //handle input changes
   const usernameInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -30,8 +32,9 @@ const LoginView = (props : loginViewProps):JSX.Element => {
         password: password
       }
     }).then((response)=>{
-      console.log("Received response for user named: " + response.data);
-      props.loginAction();
+      const loggedUser = response.data;
+      console.log("Received response for user named: " + loggedUser.username);
+      dispatch({type: 'LOG_IN', payload: loggedUser});
     }).catch((err)=>{
       console.log("An Error has occured!");
       console.log(err);
@@ -39,6 +42,12 @@ const LoginView = (props : loginViewProps):JSX.Element => {
   
     event.preventDefault();
   }
+
+  useEffect(()=>{
+    console.log(user);
+    if (user._id != -1)
+      props.loginAction();
+    }, [user])
 
   return(
     <>

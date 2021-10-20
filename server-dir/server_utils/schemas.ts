@@ -1,59 +1,34 @@
 import {Mongoose, ObjectId} from 'mongoose';
+import {User, Article, Summary, Comment, Tag, Author} from 'types';
 
 
 /***
  * Interfaces used for the Schemas.
  */
 
-export interface User {
+export interface UserBE extends User {
+    _id? : ObjectId
+} 
+
+export interface ArticleBE extends Article {
     _id? : ObjectId,
-    username : string,
-    firstName : string,
-    lastName : string,
-    password : string,
-    summaries? : Array<Summary>,
-    followedAuthors? : Array<Author>,
-    followedTags? : Array<Tag>,
-    followedUsers? : Array<User>
+    _author : ObjectId
 }
 
-export interface Article {
-    _id? : ObjectId,
-    title : string,
-    _author : ObjectId,
-    publishDate : Date,
-    link : string,
-    tags? : Array<Tag>
+export interface SummaryBE extends Summary { 
+    _id? : ObjectId
 }
 
-export interface Summary { 
-    _id? : ObjectId,
-    user : User,
-    summary: string,
-    comments? : Array<Comment>,
-    rating? : number,
-    likes : number,
-    publishDate : Date,
-    article : Article,
-    tags? : Array<Tag>
+export interface CommentBE extends Comment {
+    _id? : ObjectId
 }
 
-export interface Comment {
-    _id? : ObjectId,
-    user : User,
-    comments? : Array<Comment>,
-    likes : number
+export interface TagBE extends Tag {
+    _id? : ObjectId
 }
 
-export interface Tag {
-    _id? : ObjectId,
-    tagName : string
-}
-
-export interface Author {
-    _id? : ObjectId,
-    name : string,
-    articles? : Array<Article>
+export interface AuthorBE extends Author {
+    _id? : ObjectId
 }
 
 
@@ -74,7 +49,7 @@ export interface Author {
  * @param followedUsers an array of type User
  */
 export function retrieveUserSchema(mongoose: Mongoose){
-    const userSchema = new mongoose.Schema<User>({
+    const userSchema = new mongoose.Schema<UserBE>({
         username : { type: String, required: true },
         firstName : { type: String, required: true },
         lastName : { type: String, required: true },
@@ -103,7 +78,7 @@ export function retrieveUserSchema(mongoose: Mongoose){
  * @param tags an array of type Tag
  */
 export function retrieveArticleSchema(mongoose: Mongoose){
-    const articleSchema = new mongoose.Schema<Article>({
+    const articleSchema = new mongoose.Schema<ArticleBE>({
         title : {type: String, required: true},
         _author : {type:mongoose.Schema.Types.ObjectId, ref: 'Author', required: true},
         publishDate : {type: Date, required: true},
@@ -131,7 +106,7 @@ export function retrieveArticleSchema(mongoose: Mongoose){
  * @param followedUsers an array of type User 
  */
 export function retrieveSummarySchema(mongoose: Mongoose){
-    const summarySchema = new mongoose.Schema({
+    const summarySchema = new mongoose.Schema<SummaryBE>({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
         summary: {type: String, required: true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
@@ -159,7 +134,7 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  * @param likes
  */
  export function retrieveCommentSchema(mongoose: Mongoose){
-    const commentSchema = new mongoose.Schema({
+    const commentSchema = new mongoose.Schema<CommentBE>({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
         likes : {type: Number, required: true}
@@ -180,7 +155,7 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  * @param tagName
  */
  export function retrieveTagSchema(mongoose: Mongoose){
-    const tagSchema = new mongoose.Schema({
+    const tagSchema = new mongoose.Schema({ //should be <TagBE> but it throws error on dropdups which I'm not sure how to rid off
         tagName : {type: String, required: true, index: {unique: true, dropDups: true}}
     });
 
@@ -200,7 +175,7 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  * @param articles an array of type Article
  */
  export function retrieveAuthorSchema(mongoose: Mongoose){
-    const authorSchema = new mongoose.Schema({
+    const authorSchema = new mongoose.Schema<AuthorBE>({
         name : {type: String, required: true},
         articles : [{type:mongoose.Schema.Types.ObjectId, ref: 'Article'}]
     });

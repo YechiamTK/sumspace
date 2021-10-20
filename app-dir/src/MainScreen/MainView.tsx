@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Feed, Icon, Visibility } from "semantic-ui-react";
+import { useUserContext } from "../Context/Store";
 
 const SKIP = 10;
 const AMOUNT = 10;
@@ -46,6 +47,7 @@ export const MainView = (props: MainViewProps):JSX.Element => {
     const [skip, setSkip] = useState(SKIP);
     const [loadCount, setLoad] = useState(0);
     const [reloadCount, setReload] = useState(0);
+    const {state: {user}} = useUserContext();
     //(will be used later?) for loading content dynamically via scroll:
     //const [loadContent, setLoadContent] = useState(false);
     
@@ -53,6 +55,7 @@ export const MainView = (props: MainViewProps):JSX.Element => {
         await axios.post('/get-summaries', {
             params:
             {
+            id: user._id,
             amount: amount,
             skip: skip
             }

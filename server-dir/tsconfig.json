@@ -7,7 +7,10 @@
       "target": "es6",
       "strict": true,
       "allowJs": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "paths": {
+        "*": ["/*", "../utils/*"]
+      }
     },
     "exclude":[
       "node_modules"

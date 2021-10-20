@@ -8,7 +8,8 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { findTagsOid, getArticlesNames, getArticlesNamesAndOid, getAuthorsNames, getSummaries, loadFile, loginUser, newArticle, newAuthor, newSummary, newTags, registerUser } from './utils/restful_connections';
+import { findTagsOid, getArticlesNames, getArticlesNamesAndOid, getAuthorsNames, getSummaries,
+   loadFile, loginUser, newArticle, newAuthor, newSummary, newTags, registerUser } from './server_utils/restful_connections';
 import { Mongoose } from 'mongoose';
 
 
