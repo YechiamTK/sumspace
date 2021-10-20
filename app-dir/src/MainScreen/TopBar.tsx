@@ -22,10 +22,10 @@ export const TopBar = ():JSX.Element => {
                 name="Explore"
                 as='a'
             />
-            <Menu.Item position="right" 
+            {/* <Menu.Item position="right" 
                 name="Search"   //placeholder
                 as={Search}
-            />
+            /> */}
         </Menu>
     )
 }

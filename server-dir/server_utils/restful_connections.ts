@@ -301,13 +301,15 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  */
  export async function getSummaries(router: Router, mongoose: Mongoose){
   router.post('/get-summaries',async (req: Request, res: Response)=>{
-    const { id, amount, skip }:{id:number, amount: number, skip:number} = req.body.params;
+    const { search, amount, skip }:{search:string, amount: number, skip:number} = req.body.params;
     // console.log("new-summary: " + req.body.params);
     console.log("entered get-summaries");
 
-    let userId = new mongoose.Types.ObjectId(id);
-    const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
+    //let userId = new mongoose.Types.ObjectId(id);
+    //const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
     const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+    const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+    const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
     //let query = {};
     //user.followUser.summaries
 
@@ -316,7 +318,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     //then, find the summaries associated with those authors, users or tags
     //question - also provide the user's posts?
     //send those summaries back to the app
-    await userModel.findOne({_id: userId}).select('followedAuthors followedUsers followedTags -_id')
+    /* await userModel.findOne({_id: userId}).select('followedAuthors followedUsers followedTags -_id')
           .exec().then(async (response:UserBE)=>{
             console.log(response);
             //TODO: need to add author in summary model as well; perhaps should rethink a bit about the connections
@@ -337,14 +339,39 @@ export async function registerUser(router: Router, mongoose: Mongoose){
             });
       }).catch((err)=>{
         console.log("get-summaries: an error occured: "+ err);
-    });
-/* 
-    await summaryModel.find({"user": userId}).sort({_id: -1}).skip(skip || 0)
-      .limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())  //this might potentially not work with valueOf(), should test
-      .lean().exec().then((result: LeanDocument<SummaryBE>[])=>{
+    }); */
+
+    let regex = new RegExp(".?" + search + ".?", "i");
+    console.log(regex);
+
+    //if I will decide one big query is better:
+    await summaryModel.find()
+      .populate({path: 'article', match: {title: {"$regex": ".?"+search+".?", "$options": "i"}}})
+      .populate({path: 'tags', match: {tagName: {"$regex": ".?"+search+".?", "$options": "i"}}})
+      .sort({_id: -1}).skip(skip || 0).limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())  //this might potentially not work with valueOf(), should test
+      .exec().then((result: any[])=>{
       if (result.length > 0) {
         console.log("get-summaries: found summaries! sending them now");
-        res.send(JSON.stringify(result));
+        console.log("number of results: " + result.length);
+        let retSummaries = new Array<LeanDocument<SummaryBE>>();
+        result.forEach(summary=>{
+          if (summary.article != null) {
+            console.log("populated article: " + summary);
+            console.log("the article: " + summary.article);
+            retSummaries.push(summary);
+          }
+          else if (summary.tags.length > 0) {     //not sure this works, need to test
+            console.log("populated tags: " + summary);
+            console.log("the tags: " + summary.tags);
+            retSummaries.push(summary);
+          }
+          else if(regex.test(summary.summary)){
+            console.log("normal summary: " + summary);
+            console.log("the title: " + summary.summary);
+            retSummaries.push(summary);
+          }
+        })
+        res.send(JSON.parse(JSON.stringify(retSummaries)));
       }
       else {
         console.log("get-summaries: no matching summaries found");
@@ -352,7 +379,7 @@ export async function registerUser(router: Router, mongoose: Mongoose){
       }
     }).catch((err)=>{
       console.log("get-summaries: an error occured: "+ err);
-    }); */
+    });
   });
 }
 

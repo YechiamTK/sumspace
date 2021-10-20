@@ -1,61 +1,35 @@
-import { createContext, useContext, useReducer } from 'react';
-import {UserFE} from '../DataTypes/types';
-
-
-//TYPES
-
-type State = {
-    user: UserFE,
-  /*   isLoading: boolean, */
-    error: string
-};
-
-type Action =
-    | {type: 'LOG_IN', payload: UserFE};
-    //perhaps more types in the future
-
-type Dispatch = (action: Action) => void;
-
-type StoreProps = {
-  children: React.ReactNode
-};
+import { useContext, useReducer } from 'react';
+import { StoreProps } from './context';
+import { PostsContext, postsInitalState, postsReducer } from './PostsContext';
+import { UserContext, userInitalState, userReducer } from './UserContext';
 
 
 //Store Setup
-
-export const initalState = {
-    user: Object as unknown as UserFE,
-    error: ""
-    
-};
-  
-const reducer = ((state: State, action: Action):State => {
-    switch (action.type){
-      case 'LOG_IN':
-        return{
-          ...state,
-          user: action.payload
-        };
-      default:
-        throw new Error(`Unhandled action type: ${action.type}`);
-    }
-});
-
-const UserContext = createContext<{state:State, dispatch: Dispatch} | undefined>(undefined);
   
 export const Store = ({children}:StoreProps):JSX.Element => {
-  const user:UserFE = {_id:-1, username:"",firstName:"",lastName:"",password:""};
-  const [state, dispatch] = useReducer(reducer, {user , error: ""});
-  const value = {state, dispatch};
+  const [userState, userDispatch] = useReducer(userReducer, userInitalState);
+  const [postsState, postsDispatch] = useReducer(postsReducer, postsInitalState);
+  const userValue = {state: userState, dispatch: userDispatch};
+  const postsValue = {state: postsState, dispatch: postsDispatch};
   return (
-    <UserContext.Provider value={value}>
-      {children}
+    <UserContext.Provider value={userValue}>
+      <PostsContext.Provider value={postsValue}>
+        {children}
+      </PostsContext.Provider>
     </UserContext.Provider>
   );
 };
 
 export const useUserContext = () => {
   const context = useContext(UserContext);
+  if (context === undefined)
+    throw new Error("useUserContext must be used inside a Provider tag");
+  else
+    return context;
+}
+
+export const usePostsContext = () => {
+  const context = useContext(PostsContext);
   if (context === undefined)
     throw new Error("useUserContext must be used inside a Provider tag");
   else

@@ -42,13 +42,13 @@ export interface Article {
  */
 export interface Summary { 
     //_id? : ObjectId, - to be extended in each dir
-    user : User,
+    user : User | string | number,
     summary: string,
     comments? : Array<Comment>,
     rating? : number,
     likes : number,
     publishDate : Date,
-    article : Article,
+    article : Article | string | number,
     tags? : Array<Tag>
 }
 
