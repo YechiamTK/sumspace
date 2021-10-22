@@ -5,7 +5,11 @@ import { SearchBar } from "./SearchView/SearchBar";
 import { SearchResultsView } from "./SearchView/SearchResultsView";
 import { SidebarLeft } from "./SideBarLeft";
 import { SidebarRight } from "./SideBarRight";
-import { TopBar } from "./TopBar";
+import { TopBar } from "./TopBar/TopBar";
+import { Route } from 'react-router-dom';
+import { SearchRoute } from "./SearchView/SearchRoute";
+import { ExploreRoute } from "./ExploreView/ExploreRoute";
+import { Switch } from "react-router";
 
 
 export const Layout = ():JSX.Element => {
@@ -21,13 +25,14 @@ export const Layout = ():JSX.Element => {
                 {/* <Grid.Column width={4}>
                     <SidebarLeft triggerUpdate={()=>{setTriggerUpdate(true)}} />
                 </Grid.Column> */}
-                <Grid.Row centered columns={4}>
-                <Grid.Column >
-                    <SearchBar />
-                    <SearchResultsView />
-                    {/* <MainView updateSummaries={triggerUpdate} triggerUpdate={()=>{setTriggerUpdate(false)}}/> */}
-                </Grid.Column>
-                </Grid.Row>
+                <Switch>
+                    <Route exact path="/">
+                        <SearchRoute />
+                    </Route>
+                    <Route path="/explore">
+                        <ExploreRoute />
+                    </Route>
+                </Switch>
                 {/* <Grid.Column width={4}>
                     <SidebarRight />
                 </Grid.Column> */}

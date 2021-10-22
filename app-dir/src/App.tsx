@@ -3,6 +3,7 @@ import LoginScreen from './LoginScreen/LoginScreen';
 import { Grid } from 'semantic-ui-react';
 import { Layout } from './MainScreen/Layout';
 import {Store} from './Context/Store';
+import { BrowserRouter } from 'react-router-dom';
 
 
 function App():JSX.Element {
@@ -14,7 +15,9 @@ function App():JSX.Element {
     <Grid textAlign='center' verticalAlign='middle' style={{ height: '100vh' }} columns={1} centered>
       <Store>
         {loginBool ? 
-          <Layout /> :
+          <BrowserRouter>
+            <Layout />
+          </BrowserRouter> :
           <Grid.Column style={{maxWidth:450}}>
           <LoginScreen login={()=>{setLogin(true)}}/>
         </Grid.Column>
