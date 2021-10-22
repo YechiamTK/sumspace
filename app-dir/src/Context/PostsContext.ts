@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { postsState, Action, Dispatch } from "./context";
+import { postsState, Action, Dispatch } from "../DataTypes/context";
 
 export const postsInitalState:postsState = {
     posts: [{_id:-1, user:-1, summary: "", likes: 0, rating: 0, publishDate: new Date(), article: -1}],

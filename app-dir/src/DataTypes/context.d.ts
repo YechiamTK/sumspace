@@ -1,4 +1,4 @@
-import {UserFE, SummaryFE, TagFE} from '../DataTypes/types';
+import {UserFE, SummaryFE, TagFE} from './schemas';
 
 //TYPES
 

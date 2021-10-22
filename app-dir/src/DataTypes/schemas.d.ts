@@ -1,4 +1,4 @@
-import {Summary, Tag, User} from 'types';
+import {Summary, Tag, User} from 'generic_schema_types';
 
 
 export interface UserFE extends User {

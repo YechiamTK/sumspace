@@ -1,5 +1,5 @@
 import {Mongoose, ObjectId} from 'mongoose';
-import {User, Article, Summary, Comment, Tag, Author} from 'types';
+import {User, Article, Summary, Comment, Tag, Author} from 'generic_schema_types';
 
 
 /***

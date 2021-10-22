@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { userState, Action, Dispatch } from "./context";
+import { userState, Action, Dispatch } from "../DataTypes/context";
 
 export const userInitalState:userState = {
     user: {_id:-1, username:"",firstName:"",lastName:"",password:""},

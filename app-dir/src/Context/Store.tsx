@@ -1,5 +1,5 @@
 import { useContext, useReducer } from 'react';
-import { StoreProps } from './context';
+import { StoreProps } from '../DataTypes/context';
 import { PostsContext, postsInitalState, postsReducer } from './PostsContext';
 import { UserContext, userInitalState, userReducer } from './UserContext';
 
