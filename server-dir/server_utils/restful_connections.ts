@@ -344,26 +344,33 @@ export async function registerUser(router: Router, mongoose: Mongoose){
     let regex = new RegExp(".?" + search + ".?", "i");
     console.log(regex);
 
+    /* 
+    .populate({path: 'article', match: {title: {"$regex": ".?"+search+".?", "$options": "i"}}})
+    .populate({path: 'tags', match: {tagName: {"$regex": ".?"+search+".?", "$options": "i"}}}) */
+
     //if I will decide one big query is better:
     await summaryModel.find()
-      .populate({path: 'article', match: {title: {"$regex": ".?"+search+".?", "$options": "i"}}})
-      .populate({path: 'tags', match: {tagName: {"$regex": ".?"+search+".?", "$options": "i"}}})
-      .sort({_id: -1}).skip(skip || 0).limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())  //this might potentially not work with valueOf(), should test
+      .populate('article').populate('tags').sort({_id: -1}).skip(skip || 0)
+      .limit(amount || (await summaryModel.collection.estimatedDocumentCount()).valueOf())  //this might potentially not work with valueOf(), should test
       .exec().then((result: any[])=>{
       if (result.length > 0) {
         console.log("get-summaries: found summaries! sending them now");
         console.log("number of results: " + result.length);
         let retSummaries = new Array<LeanDocument<SummaryBE>>();
-        result.forEach(summary=>{
-          if (summary.article != null) {
+        result.forEach((summary:SummaryBE)=>{
+          if (typeof summary.article === "object" && regex.test(summary.article.title)) {
             console.log("populated article: " + summary);
+            console.log("the article title: " + summary.article.title);
             console.log("the article: " + summary.article);
             retSummaries.push(summary);
           }
-          else if (summary.tags.length > 0) {     //not sure this works, need to test
-            console.log("populated tags: " + summary);
-            console.log("the tags: " + summary.tags);
-            retSummaries.push(summary);
+          else if (summary.tags && summary.tags.length > 0){
+            let matchedTags = summary.tags.map((tag:TagBE)=>{regex.test(tag.tagName)});
+            if (matchedTags.length > 0) {     //not sure this works, need to test
+              console.log("populated tags: " + summary);
+              console.log("the tags: " + matchedTags);
+              retSummaries.push(summary);
+            }
           }
           else if(regex.test(summary.summary)){
             console.log("normal summary: " + summary);

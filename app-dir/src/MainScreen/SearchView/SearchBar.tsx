@@ -19,9 +19,7 @@ export const SearchBar = ():JSX.Element => {
         axios.post('/get-summaries',{
             params:
             {
-                search: searchInput,
-                amount: 10,
-                skip: 0
+                search: searchInput
             }
         }).then((response)=>{
             console.log(response.data);

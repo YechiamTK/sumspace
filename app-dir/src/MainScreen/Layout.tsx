@@ -17,17 +17,17 @@ export const Layout = ():JSX.Element => {
             <Grid.Row>
                 <TopBar />
             </Grid.Row>
-            <Grid columns={3} style={{position: 'relative', top: '13vh'}}>
+            <Grid style={{position: 'relative', top: '13vh'}}>
                 {/* <Grid.Column width={4}>
                     <SidebarLeft triggerUpdate={()=>{setTriggerUpdate(true)}} />
                 </Grid.Column> */}
-                <Grid.Column width={12}>
+                <Grid.Row centered columns={4}>
+                <Grid.Column >
                     <SearchBar />
-                    <Container fluid>
-                        <SearchResultsView />
-                    </Container>
+                    <SearchResultsView />
                     {/* <MainView updateSummaries={triggerUpdate} triggerUpdate={()=>{setTriggerUpdate(false)}}/> */}
                 </Grid.Column>
+                </Grid.Row>
                 {/* <Grid.Column width={4}>
                     <SidebarRight />
                 </Grid.Column> */}
