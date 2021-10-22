@@ -21,6 +21,16 @@ export type Action =
 
 export type Dispatch = (action: Action) => void;
 
+export type userContext = {
+  state: userState;
+  dispatch: Dispatch;
+}
+
+export type postsContext = {
+  state: postsState;
+  dispatch: Dispatch;
+}
+
 export type StoreProps = {
   children: React.ReactNode
 };

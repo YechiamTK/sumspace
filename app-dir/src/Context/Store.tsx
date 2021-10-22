@@ -1,5 +1,5 @@
 import { useContext, useReducer } from 'react';
-import { StoreProps } from '../DataTypes/context';
+import { postsContext, StoreProps, userContext } from '../DataTypes/context';
 import { PostsContext, postsInitalState, postsReducer } from './PostsContext';
 import { UserContext, userInitalState, userReducer } from './UserContext';
 
@@ -20,7 +20,7 @@ export const Store = ({children}:StoreProps):JSX.Element => {
   );
 };
 
-export const useUserContext = () => {
+export const useUserContext = ():userContext => {
   const context = useContext(UserContext);
   if (context === undefined)
     throw new Error("useUserContext must be used inside a Provider tag");
@@ -28,7 +28,7 @@ export const useUserContext = () => {
     return context;
 }
 
-export const usePostsContext = () => {
+export const usePostsContext = ():postsContext => {
   const context = useContext(PostsContext);
   if (context === undefined)
     throw new Error("useUserContext must be used inside a Provider tag");

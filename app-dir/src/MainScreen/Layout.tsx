@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Grid } from "semantic-ui-react";
-import { MainView } from "./MainView";
+/* import { MainView } from "./MainView";
 import { SearchBar } from "./SearchView/SearchBar";
 import { SearchResultsView } from "./SearchView/SearchResultsView";
 import { SidebarLeft } from "./SideBarLeft";
-import { SidebarRight } from "./SideBarRight";
+import { SidebarRight } from "./SideBarRight"; */
 import { TopBar } from "./TopBar/TopBar";
 import { Route } from 'react-router-dom';
 import { SearchRoute } from "./SearchView/SearchRoute";
@@ -14,7 +14,7 @@ import { Switch } from "react-router";
 
 export const Layout = ():JSX.Element => {
 
-    const [triggerUpdate, setTriggerUpdate] = useState(false);
+    //const [triggerUpdate, setTriggerUpdate] = useState(false);
 
     return (
         <Container fluid>

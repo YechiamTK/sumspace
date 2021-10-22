@@ -1,13 +1,13 @@
 import axios from "axios";
-import { FormEvent, useEffect, useState } from "react";
-import { Button, Form, Input, InputProps, Search } from "semantic-ui-react";
+import { FormEvent, useState } from "react";
+import { Button, Form, Input, InputProps } from "semantic-ui-react";
 import { usePostsContext } from "../../Context/Store";
 
 
 export const SearchBar = ():JSX.Element => {
 
     const [searchInput, setSearchInput] = useState("");
-    const {state: {posts}, dispatch} = usePostsContext();
+    const {/* state: {posts},  */dispatch} = usePostsContext();
 
 
     const searchInputChange = (event: InputProps) => {

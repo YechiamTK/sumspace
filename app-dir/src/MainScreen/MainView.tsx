@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Feed, Icon, Visibility } from "semantic-ui-react";
+import { Button, Feed, Icon } from "semantic-ui-react";
 import { useUserContext } from "../Context/Store";
 
 const SKIP = 10;
@@ -19,14 +19,14 @@ interface SummaryJson {
     _v: number
 }
 
-type MainViewProps = {
+/* type MainViewProps = {
     updateSummaries: boolean,
     triggerUpdate : ()=>void
-}
+} */
 
 //Might divide this into a smaller "FeedView" tsx
 //And put it here with more context, if there is.
-export const MainView = (props: MainViewProps):JSX.Element => {
+export const MainView = (/* props: MainViewProps */):JSX.Element => {
 
     //Need to do:
     //1.Get user information -
@@ -91,7 +91,6 @@ export const MainView = (props: MainViewProps):JSX.Element => {
         }
     }, [loadCount]);
 
-    const date = new Date();
     return(
         //ALL THIS VISIBILITY BS - NOT NOW OK?!
 

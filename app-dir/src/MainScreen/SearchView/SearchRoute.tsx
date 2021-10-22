@@ -3,7 +3,7 @@ import { SearchBar } from "./SearchBar"
 import { SearchResultsView } from "./SearchResultsView"
 
 
-export const SearchRoute = () => {
+export const SearchRoute = ():JSX.Element => {
 
     return(
         <Grid.Row centered columns={4}>
