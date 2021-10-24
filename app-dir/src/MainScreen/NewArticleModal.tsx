@@ -44,7 +44,7 @@ export const NewArticleModal = ():JSX.Element => {
         //first check if author already exists
         //perhaps should move this check to backend
         let authorsList = new Array<string>();
-        await axios.get('/get-authors').then((response)=>{
+        await axios.get('/get-authors-names').then((response)=>{
             authorsList = response.data;
             console.log('authors list is: ' + authorsList);
         }).catch((err)=>{

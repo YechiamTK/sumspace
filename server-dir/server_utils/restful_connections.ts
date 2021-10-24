@@ -96,8 +96,34 @@ export async function registerUser(router: Router, mongoose: Mongoose){
  * returns authors' names list.
  * @param router express router to be used
  */
- export async function getAuthorsNames(router: Router, mongoose: Mongoose){
+ export async function getAuthors(router: Router, mongoose: Mongoose){
   router.get('/get-authors',async (req: Request, res: Response)=>{
+    console.log("entered get-authors");
+    
+    const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
+    console.log("get-authors: connected to author model");
+    let authors = new Array<any>(); //want it to work first
+    await authorModel.find({}).select('name').lean().exec().then((result: LeanDocument<AuthorBE>[])=>{
+      if (result.length > 0)
+        res.send(JSON.stringify(result));
+      else
+        res.send("error: no authors available");
+    }).catch((err)=>{
+      console.log("get-authors: An error has accured: " + err);
+    });
+    
+    //need to insert check before send
+  });
+}
+
+/**
+ * util function getAuthors:
+ * 
+ * returns authors' names list.
+ * @param router express router to be used
+ */
+ export async function getAuthorsNames(router: Router, mongoose: Mongoose){
+  router.get('/get-authors-names',async (req: Request, res: Response)=>{
     console.log("entered get-authors");
     
     const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
@@ -415,6 +441,29 @@ export async function registerUser(router: Router, mongoose: Mongoose){
         console.log("find-tags-oid: returning tags' oids: " + sendTags);
         res.send(sendTags);
       }
+    })
+  });
+}
+
+/**
+ * util function getTags:
+ * 
+ * searches for the requested tags and returns their oids.
+ * @param router express router to be used
+ */
+ export async function getTags(router: Router, mongoose: Mongoose){
+  router.get('/get-tags',async (req: Request, res: Response)=>{
+    console.log("entered get-tags-");
+    //const {requestedTags} = req.body.params;
+    //console.log(requestedTags);
+    const tagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
+    console.log("find-tags-oid: connected to tag model");
+    //search the tags, error if not all returns:
+    await tagModel.find().select('tagName').lean().exec().then(async (result: LeanDocument<TagBE>[])=>{
+      if (result.length > 0)
+        res.send(JSON.stringify(result));
+      else
+        res.send("error: no tags available");
     })
   });
 }

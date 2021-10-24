@@ -8,7 +8,8 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { findTagsOid, getArticlesNames, getArticlesNamesAndOid, getAuthorsNames, getSummaries,
+import { findTagsOid, getArticlesNames, getArticlesNamesAndOid, getAuthors, getAuthorsNames, getSummaries,
+   getTags,
    loadFile, loginUser, newArticle, newAuthor, newSummary, newTags, registerUser } from './server_utils/restful_connections';
 import { Mongoose } from 'mongoose';
 
@@ -43,6 +44,7 @@ mongoose.connect(db, options).then(async ()=>{
 
     //set up author api
     newAuthor(router, mongoose);
+    getAuthors(router, mongoose);
     getAuthorsNames(router, mongoose);
    
     //set up articles api
@@ -55,6 +57,7 @@ mongoose.connect(db, options).then(async ()=>{
     newSummary(router, mongoose);
 
     //set up tag api
+    getTags(router, mongoose);
     findTagsOid(router, mongoose);
     newTags(router, mongoose);
     
