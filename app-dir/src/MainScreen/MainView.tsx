@@ -2,22 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Feed, Icon } from "semantic-ui-react";
 import { useUserContext } from "../Context/Store";
+import { SummaryJson } from "../DataTypes/schemas_json";
 
 const SKIP = 10;
 const AMOUNT = 10;
-
-interface SummaryJson {
-    _id : number,
-    user: number,
-    summary: string,
-    comments: Array<number>,
-    rating: number,
-    likes: number,
-    publishDate: Date,
-    article: number,
-    tags: Array<number>
-    _v: number
-}
 
 /* type MainViewProps = {
     updateSummaries: boolean,

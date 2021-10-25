@@ -1,20 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { List } from "semantic-ui-react"
+import { tagJson, authorJson } from "../../DataTypes/schemas_json";
 import { GenericSegmentList } from "./GenericSegmentList";
 
-
-//Need to transfer this to DataTypes
-interface tagJson {
-    _id : string | number,
-    tagName: string
-}
-
-interface authorJson {
-    _id : string | number,
-    name: string,
-    articles?: Array<any>
-}
 
 
 export const ExploreRoute = ():JSX.Element => {
