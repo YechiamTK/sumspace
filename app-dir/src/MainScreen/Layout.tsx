@@ -10,6 +10,7 @@ import { Route } from 'react-router-dom';
 import { SearchRoute } from "./SearchView/SearchRoute";
 import { ExploreRoute } from "./ExploreView/ExploreRoute";
 import { Switch } from "react-router";
+import { SummaryRoute } from "./SummaryView/SummaryRoute";
 
 
 export const Layout = ():JSX.Element => {
@@ -31,6 +32,9 @@ export const Layout = ():JSX.Element => {
                     </Route>
                     <Route path="/explore">
                         <ExploreRoute />
+                    </Route>
+                    <Route path="/summary">
+                        <SummaryRoute />
                     </Route>
                 </Switch>
                 {/* <Grid.Column width={4}>

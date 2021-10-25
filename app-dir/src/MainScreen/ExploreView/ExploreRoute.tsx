@@ -45,7 +45,7 @@ export const ExploreRoute = ():JSX.Element => {
                 tags.map((tag)=>{
                     //I wanted to add <Divider> but for some reason it's fucked up
                     return(
-                        <List.Item onClick={() => { console.log('clicked' + tag.tagName); } } key={tag._id}>
+                        <List.Item as='a' onClick={() => { console.log('clicked' + tag.tagName); } } key={tag._id}>
                             <List.Header>{tag.tagName}</List.Header>
                         </List.Item>
                     )
@@ -55,7 +55,7 @@ export const ExploreRoute = ():JSX.Element => {
                 authors.map((author)=>{
                     //I wanted to add <Divider> but for some reason it's fucked up
                     return(
-                        <List.Item onClick={() => { console.log('clicked' + author.name); } } key={author._id}>
+                        <List.Item as='a' onClick={() => { console.log('clicked' + author.name); } } key={author._id}>
                             <List.Header>{author.name}</List.Header>
                         </List.Item>
                     )
