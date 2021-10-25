@@ -20,6 +20,11 @@ export const postsReducer = ((state: postsState, action: Action):postsState => {
           ...state,
           selectedPost: action.payload
         };
+      case 'EMPTY_POSTS':
+        return{
+          ...state,
+          posts: []
+        }
       default:
         throw new Error(`Unhandled action type: ${action.type}`);
     }

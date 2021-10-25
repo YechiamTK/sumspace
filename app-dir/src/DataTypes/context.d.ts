@@ -18,7 +18,8 @@ export type postsState = {
 export type Action =
     | {type: 'LOG_IN', payload: UserFE}
     | {type: 'GET_POSTS', payload: SummaryFE[]}
-    | {type: 'SELECT_POST', payload: SummaryFE};
+    | {type: 'SELECT_POST', payload: SummaryFE}
+    | {type: 'EMPTY_POSTS'};
     //perhaps more types in the future
 
 export type Dispatch = (action: Action) => void;

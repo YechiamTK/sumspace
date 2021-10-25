@@ -1,5 +1,6 @@
 import axios from "axios";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { Button, Form, Input, InputProps } from "semantic-ui-react";
 import { usePostsContext } from "../../Context/Store";
 
@@ -8,6 +9,7 @@ export const SearchBar = ():JSX.Element => {
 
     const [searchInput, setSearchInput] = useState("");
     const {/* state: {posts},  */dispatch} = usePostsContext();
+    const history = useHistory();
 
 
     const searchInputChange = (event: InputProps) => {
@@ -37,6 +39,15 @@ export const SearchBar = ():JSX.Element => {
 
         } 
     }, [posts]); */
+
+    useEffect(()=>{
+        //Unfortunately I need to use `any` type because
+        //I think history's types are incorrect.
+        history.listen((location: any)=>{
+            if (location.pathname == "/")
+                dispatch({type: 'EMPTY_POSTS'})
+        });
+    }, []);
 
     return(
         <Form onSubmit={fetchResults}>

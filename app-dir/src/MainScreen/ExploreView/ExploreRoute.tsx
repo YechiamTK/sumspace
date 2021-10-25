@@ -4,6 +4,7 @@ import { List } from "semantic-ui-react"
 import { GenericSegmentList } from "./GenericSegmentList";
 
 
+//Need to transfer this to DataTypes
 interface tagJson {
     _id : string | number,
     tagName: string

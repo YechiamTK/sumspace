@@ -5,7 +5,7 @@ interface SegmentListProps {
     chlidren: JSX.Element[]
 }
 
-export const GenericSegmentList = (props: SegmentListProps) => {
+export const GenericSegmentList = (props: SegmentListProps):JSX.Element => {
 
     return (
         <Grid.Row centered columns={4}>
