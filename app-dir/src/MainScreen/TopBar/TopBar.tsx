@@ -1,6 +1,8 @@
 import React from "react";
 import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { NewArticleModal } from "../NewArticleModal";
+import { NewSummaryModal } from "../NewSummaryModal";
 
 export const TopBar = ():JSX.Element => {
     
@@ -12,6 +14,7 @@ export const TopBar = ():JSX.Element => {
         <Menu size='large' fixed="top" inverted style={{backgroundColor: "#113240"}}>
             <Menu.Item 
                 name="Home"
+                as='a'
             >
                 <Link to={"/"}>
                 Home
@@ -23,15 +26,17 @@ export const TopBar = ():JSX.Element => {
             />
             <Menu.Item 
                 name="Explore"
+                as='a'
             >
                 <Link to={"/explore"}>
                 Explore
                 </Link>
             </Menu.Item>
-            {/* <Menu.Item position="right" 
-                name="Search"   //placeholder
-                as={Search}
-            /> */}
+
+            <Menu.Menu position='right'>
+                <NewArticleModal />
+                <NewSummaryModal />
+            </Menu.Menu>
         </Menu>
     )
 }

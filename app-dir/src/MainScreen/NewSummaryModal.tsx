@@ -5,7 +5,7 @@ import { useUserContext } from "../Context/Store";
 
 
 type SummaryModalProps = {
-    triggerUpdate: () => void
+    triggerUpdate?: () => void
 }
 
 export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
@@ -56,7 +56,8 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
           console.log(err);
         });
       
-        props.triggerUpdate();
+        if (props.triggerUpdate)
+            props.triggerUpdate();
         setShow(false);
         event.preventDefault();
     }
