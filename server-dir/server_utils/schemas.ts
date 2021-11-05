@@ -136,6 +136,8 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  export function retrieveCommentSchema(mongoose: Mongoose){
     const commentSchema = new mongoose.Schema<CommentBE>({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
+        text : {type: String, required: true},
+        date : {type:Date, required: true},
         comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
         likes : {type: Number, required: true}
     });

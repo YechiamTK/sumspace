@@ -60,6 +60,8 @@ export interface Summary {
 export interface Comment {
     //_id? : ObjectId, - to be extended in each dir
     user : User,
+    text : string,
+    date : Date,
     comments? : Array<Comment>,
     likes : number
 }
