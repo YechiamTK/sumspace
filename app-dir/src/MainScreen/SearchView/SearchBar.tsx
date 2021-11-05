@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Form, Input, InputProps } from "semantic-ui-react";
 import { usePostsContext } from "../../Context/Store";
+import { SearchBarStyle } from './SearchBarStyle';
 
 
 export const SearchBar = ():JSX.Element => {
@@ -10,6 +11,10 @@ export const SearchBar = ():JSX.Element => {
     const [searchInput, setSearchInput] = useState("");
     const {/* state: {posts},  */dispatch} = usePostsContext();
     const history = useHistory();
+    const [barStyleTransition, setBarStyleTransition] = useState(SearchBarStyle().transitionDown);
+    const setTransform = SearchBarStyle().setTransform;
+    console.log(setTransform);
+    console.log(barStyleTransition);
 
 
     const searchInputChange = (event: InputProps) => {
@@ -25,7 +30,12 @@ export const SearchBar = ():JSX.Element => {
             }
         }).then((response)=>{
             console.log(response.data);
-            dispatch({type: 'GET_POSTS', payload: response.data});
+            if (barStyleTransition != SearchBarStyle().resetTransform) {
+                setBarStyleTransition(SearchBarStyle().resetTransform);
+                setTimeout(()=>dispatch({type: 'GET_POSTS', payload: response.data}), 500);
+            }
+            else
+                dispatch({type: 'GET_POSTS', payload: response.data});
         }).catch((err)=>{
             console.log("An error occured during search: " + err);
         });
@@ -44,13 +54,16 @@ export const SearchBar = ():JSX.Element => {
         //Unfortunately I need to use `any` type because
         //I think history's types are incorrect.
         history.listen((location: any)=>{
-            if (location.pathname == "/")
+            if (location.pathname == "/") {
                 dispatch({type: 'EMPTY_POSTS'})
+                if (barStyleTransition == SearchBarStyle().resetTransform)
+                    setBarStyleTransition(SearchBarStyle().transitionDown)
+            }
         });
     }, []);
 
     return(
-        <Form onSubmit={fetchResults}>
+        <Form onSubmit={fetchResults} style={{...setTransform, ...barStyleTransition}}>
             <Input
                 onChange={searchInputChange}
                 value={searchInput}
