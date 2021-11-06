@@ -8,9 +8,9 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { findTagsOid, getArticlesNames, getArticlesNamesAndOid, getAuthors, getAuthorsNames, getSummaries,
+import { findTagsOid, fullSummary, getArticlesNames, getArticlesNamesAndOid, getAuthors, getAuthorsNames, getSummaries,
    getTags,
-   loadFile, loginUser, newArticle, newAuthor, newSummary, newTags, registerUser } from './server_utils/restful_connections';
+   loadFile, loginUser, newArticle, newAuthor, newComment, newSummary, newTags, registerUser } from './server_utils/restful_connections';
 import { Mongoose } from 'mongoose';
 
 
@@ -55,11 +55,15 @@ mongoose.connect(db, options).then(async ()=>{
     //set up summary api
     getSummaries(router, mongoose);
     newSummary(router, mongoose);
+    fullSummary(router, mongoose);
 
     //set up tag api
     getTags(router, mongoose);
     findTagsOid(router, mongoose);
     newTags(router, mongoose);
+
+    //set up comment api
+    newComment(router, mongoose);
     
     
     // Handles any requests that don't match the ones above

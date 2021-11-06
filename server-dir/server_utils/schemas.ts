@@ -130,7 +130,9 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  * Comment schema:
  * 
  * @param user of type User
- * @param followedAuthors an array of type Comment
+ * @param text the comment itself
+ * @param date publish date of the comment
+ * @param comments an array of type Comment
  * @param likes
  */
  export function retrieveCommentSchema(mongoose: Mongoose){
