@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, Grid, Rating } from "semantic-ui-react";
-import { usePostsContext } from "../../Context/Store";
 import { SummaryFE } from "../../DataTypes/schemas";
 
 interface SummaryProps{

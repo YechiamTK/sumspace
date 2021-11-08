@@ -189,12 +189,17 @@ import { retrieveArticleSchema, retrieveSummarySchema, SummaryBE, retrieveTagSch
   
       const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
       const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
-      const CommentModel = mongoose.models.Comment || mongoose.model('Comment', retrieveCommentSchema(mongoose));
+      //const CommentModel = mongoose.models.Comment || mongoose.model('Comment', retrieveCommentSchema(mongoose));
       const ArticleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
       const TagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
   
       summaryModel.findOne({'_id': summaryId})
-                  .populate('user').populate('comments.comment.' /* something is wrong here! */).populate('article').populate('tags')
+                  .populate('user').populate('article').populate('tags')
+                  .populate({
+                    path:     'comments',			
+                    populate: { path:  'user',
+                            model: 'User' }
+                  })
                   .lean().exec().then((result: LeanDocument<SummaryBE>)=>{
                     console.log(result);
                     res.send(result);

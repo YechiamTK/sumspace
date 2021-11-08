@@ -15,7 +15,7 @@ export const SearchResultsView = ():JSX.Element => {
         <Feed>
             {posts.map((post)=>{
                 if (post._id != -1)
-                    return( <Feed.Event onClick={()=>{dispatch({type: 'SELECT_POST', payload: post}), history.push("/summary")}}>
+                    return( <Feed.Event onClick={()=>{dispatch({type: 'SELECT_POST', payload: post._id}), history.push("/summary")}}>
                         <Feed.Label image={"./img/profile.jpg"}/>
                         <Feed.Content style={{whiteSpace: "pre-line"}}
                             date={post.publishDate}

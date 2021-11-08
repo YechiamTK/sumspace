@@ -109,7 +109,23 @@ export function retrieveSummarySchema(mongoose: Mongoose){
     const summarySchema = new mongoose.Schema<SummaryBE>({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
         summary: {type: String, required: true},
-        comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
+        //comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
+       comments: [retrieveCommentSchema(mongoose)],
+        /*  comments: 
+        [
+            {type:mongoose.Schema.Types.ObjectId, required : true},
+            {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
+            {type: String, required: true},
+            {type:Date, required: true},
+            [
+                {type:mongoose.Schema.Types.ObjectId, required : true},
+                {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
+                {type: String, required: true},
+                {type:Date, required: true},
+                {type: Number, required: true}
+            ],
+            {type: Number, required: true}
+        ], */
         rating : {type: Number, required: true},
         likes : {type: Number, required: true},
         publishDate : {type: Date, required: true},

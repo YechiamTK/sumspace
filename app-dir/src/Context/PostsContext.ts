@@ -3,6 +3,7 @@ import { postsState, Action, Dispatch } from "../DataTypes/context";
 
 export const postsInitalState:postsState = {
     posts: [{_id:-1, user:-1, summary: "", likes: 0, rating: 0, publishDate: new Date(), article: -1}],
+    selectedPostId: -1,
     selectedPost: {_id:-1, user:-1, summary: "", likes: 0, rating: 0, publishDate: new Date(), article: -1},
     tags: [{_id: -1, tagName: ""}],
     error: ""
@@ -16,6 +17,11 @@ export const postsReducer = ((state: postsState, action: Action):postsState => {
           posts: action.payload
         };
       case 'SELECT_POST':
+        return{
+          ...state,
+          selectedPostId: action.payload
+        };
+      case 'EXTEND_POST':
         return{
           ...state,
           selectedPost: action.payload

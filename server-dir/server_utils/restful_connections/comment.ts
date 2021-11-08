@@ -6,7 +6,7 @@
 
 import { Router, Request, Response } from "express";
 import { Mongoose } from "mongoose";
-import { retrieveCommentSchema, retrieveSummarySchema, CommentBE, SummaryBE } from "../schemas";
+import { retrieveCommentSchema, retrieveSummarySchema, CommentBE, SummaryBE, retrieveUserSchema } from "../schemas";
 
 
 
@@ -27,7 +27,9 @@ import { retrieveCommentSchema, retrieveSummarySchema, CommentBE, SummaryBE } fr
       console.log("new-comment: connected to comment model");
       const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
       console.log("new-comment: connected to summary model");
-  
+      const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
+      console.log("new-comment: connected to user model");
+
       //create the comment
       const comment = new commentModel({
         user: userId,
@@ -37,7 +39,12 @@ import { retrieveCommentSchema, retrieveSummarySchema, CommentBE, SummaryBE } fr
       });
       
       //connect to the summary
-      await summaryModel.findOne({'_id': summaryId}).exec().then(async (result: any)=>{ //any because the document type isn't good enough
+      await summaryModel.findOne({'_id': summaryId}).populate({/*tbh this isn't very atomic, I'll might need to rethink it later*/
+            path:     'comments',			
+            populate: { path:  'user',
+                    model: 'User' }
+        })
+        .exec().then(async (result: any)=>{ //any because the document type isn't good enough
         (result.comments ?
           //if the comments exists, simply push the comment
           (result.comments.push(comment))
@@ -55,7 +62,8 @@ import { retrieveCommentSchema, retrieveSummarySchema, CommentBE, SummaryBE } fr
           }
           else{
             console.log("new-comment: Comment saved successfuly!");
-            response.send("success");
+            console.log(doc.comments);
+            response.send(JSON.parse(JSON.stringify(doc.comments)));
           }
         });
       });

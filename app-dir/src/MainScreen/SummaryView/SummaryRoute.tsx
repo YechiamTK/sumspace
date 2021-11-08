@@ -1,30 +1,48 @@
 import React, { useEffect } from "react";
-import { Card, Grid, Rating } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import { usePostsContext } from "../../Context/Store";
 import { SummaryView } from "./SummaryView";
 import { DiscussionView } from "./DiscussionView";
 import axios from "axios";
+/* 
+interface props{
+    a: string
+}
+ */
+export const SummaryRoute = (/* props:props */):JSX.Element => {
 
-
-export const SummaryRoute = ():JSX.Element => {
-
-    const {state: {selectedPost}, dispatch} = usePostsContext();
+    const {state: {selectedPost, selectedPostId}, dispatch} = usePostsContext();
 
     useEffect(() => {
-        axios.post('full-summary',{
+        console.log(selectedPostId)
+        axios.post('/full-summary',{
             params:{
-                summaryId: selectedPost._id
+                summaryId: selectedPostId
             }
         }).then((response)=>{
             console.log(response.data);
-            dispatch({type: 'SELECT_POST', payload: response.data});
+            dispatch({type: 'EXTEND_POST', payload: response.data});
         })
     },[]);
+/* 
+    useEffect(()=>{
+        
+    }) */
+
+    /* useEffect(()=>{
+        console.log(props.a);
+    },[]); */
 
     return(
         <Grid columns={1} verticalAlign="middle" textAlign="center">    {/* idk why verticalAlign doesn't work */}
-            <SummaryView selectedPost={selectedPost}/>
-            <DiscussionView selectedPost={selectedPost}/>
+            {
+                (selectedPost._id == selectedPostId ?
+                <><SummaryView selectedPost={selectedPost}/>
+                <DiscussionView selectedPost={selectedPost}/></>
+                :
+                <></>
+                )
+            }
         </Grid>
     );
 }
