@@ -8,10 +8,15 @@
 import express from 'express';
 import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
-import { findTagsOid, fullSummary, getArticlesNames, getArticlesNamesAndOid, getAuthors, getAuthorsNames, getSummaries,
-   getTags,
-   loadFile, loginUser, newArticle, newAuthor, newComment, newSummary, newTags, registerUser } from './server_utils/restful_connections';
+
 import { Mongoose } from 'mongoose';
+import { newArticle, getArticlesNamesAndOid, getArticlesNames } from './server_utils/restful_connections/article';
+import { newAuthor, getAuthors, getAuthorsNames } from './server_utils/restful_connections/author';
+import { newComment } from './server_utils/restful_connections/comment';
+import { loadFile } from './server_utils/restful_connections/util';
+import { getSummaries, newSummary, fullSummary } from './server_utils/restful_connections/summary';
+import { getTags, findTagsOid, newTags } from './server_utils/restful_connections/tag';
+import { loginUser, registerUser } from './server_utils/restful_connections/user';
 
 
 //set up useful consts:
