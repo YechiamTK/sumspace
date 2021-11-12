@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import {Button, Comment, Form, Grid, Header, InputProps} from 'semantic-ui-react';
 import { usePostsContext, useUserContext } from '../../Context/Store';
 import { SummaryFE, CommentFE } from '../../DataTypes/schemas';
+import { CommentsListMemo } from './CommentsList';
 
 interface SummaryProps{
     selectedPost: SummaryFE
@@ -42,8 +43,6 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
                 console.log(response.data);
                 dispatch({type: 'EXTEND_POST', payload: response.data});
             }).then(()=>{
-                //setComments(props.selectedPost.comments ? props.selectedPost.comments : comments);
-                //I don't have the energy to deal with the correct implementation now; going the easy way:
                 setComments(selectedPost.comments ? selectedPost.comments : comments);
             })
         }).catch((err)=>{
@@ -54,16 +53,10 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
     }
 
     useEffect(() => {
-        //I really don't understand how this keeps getting called !@!@
-        console.log("memoized");
+        console.log("comments changed!");
         if (comments != selectedPost.comments)
             setComments(selectedPost.comments ? selectedPost.comments : comments);
-    },[{selectedPost}],);
-
-    /* useEffect(()=>{
-        if (props.selectedPost.comments && props.selectedPost.comments.length > 0)
-            setComments(props.selectedPost.comments)
-    }, [props.selectedPost.comments]) */
+    },[selectedPost],);
 
     return (
         <Grid.Row>
@@ -72,30 +65,7 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
                     Comments
                 </Header>
                 
-                {comments.length > 0 ? comments.map((comment => 
-                    {
-                        //THIS SECTION SHOULD NOT RE-RENDER VIA Form's onChange
-                        
-                        return(
-                        <Comment key={comment._id}>
-                            <Comment.Avatar as='a' src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' /*need avatar for users?*/ />
-                            <Comment.Content>
-                                <Comment.Author as='a'>{comment.user.username}</Comment.Author>
-                                <Comment.Metadata>
-                                <span>{comment.date}</span>
-                                </Comment.Metadata>
-                                <Comment.Text>{comment.text}</Comment.Text>
-                                <Comment.Actions>
-                                <a>Reply</a>
-                                </Comment.Actions>
-                            </Comment.Content>
-                        </Comment>
-                    )
-                    })) : 
-                        <Header as="h5">
-                        No Comments yet...
-                        </Header>
-                }
+                <CommentsListMemo comments={comments} />
 
                 <Form reply onSubmit={postComment}>
                     <Form.TextArea value={commentText} onChange={commentTextInputChange}/>
