@@ -14,6 +14,7 @@ export interface TagFE extends Tag {
   _id: number
 }
 
-export interface CommentFE extends Comment {
+export interface CommentFE extends Omit<Comment, 'comments'> {
   _id: number
+  comments?: [CommentFE]
 }
