@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import {Button, Comment, Form, Grid, Header, InputProps} from 'semantic-ui-react';
+import { Comment, Grid, Header } from 'semantic-ui-react';
 import { usePostsContext, useUserContext } from '../../Context/Store';
 import { SummaryFE, CommentFE } from '../../DataTypes/schemas';
 import { CommentsListMemo } from './CommentsList';
+import { ReplyForm } from './ReplyForm';
 
 interface SummaryProps{
     selectedPost: SummaryFE
@@ -11,7 +12,6 @@ interface SummaryProps{
 
 export const DiscussionView = (props: SummaryProps):JSX.Element => {
 
-    const [commentText, SetcommentText] = useState("");
     const {state: {user}} = useUserContext();
     const {state: {selectedPost}, dispatch} = usePostsContext();
     const [comments, setComments] = useState(
@@ -21,13 +21,8 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
             new Array<CommentFE>()
         ));
 
-    
-    const commentTextInputChange = (event: InputProps) => {
-        const target = event.target as unknown as InputProps; 
-        SetcommentText(target.value);
-    }
 
-    const postComment = (event: React.FormEvent<HTMLFormElement>) => {
+    const postComment = (event: React.FormEvent<HTMLFormElement>, commentText: string) => {
         axios.post("/new-comment",{
             params: {
                 userId: user._id,
@@ -65,16 +60,11 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
                     Comments
                 </Header>
                 
-                <CommentsListMemo comments={comments} />
+                <CommentsListMemo comments={comments} 
+                                reply={ReplyForm}
+                                submitFunction={postComment} />
 
-                <Form reply onSubmit={postComment}>
-                    <Form.TextArea value={commentText} onChange={commentTextInputChange}/>
-                    <Button 
-                        type="submit"
-                        content="Add Reply"
-                        icon="edit"
-                    />
-                </Form>
+                <ReplyForm submitFunction={postComment} />
                     
             </Comment.Group>
         </Grid.Row>
