@@ -22,27 +22,54 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
         ));
 
 
-    const postComment = (event: React.FormEvent<HTMLFormElement>, commentText: string) => {
-        axios.post("/new-comment",{
-            params: {
-                userId: user._id,
-                commentText: commentText,
-                summaryId: props.selectedPost._id
-            }
-        }).then(async ()=>{
-            axios.post('/full-summary',{
-                params:{
+    const postComment = (event: React.FormEvent<HTMLFormElement>, commentText: string, level?: number, commentsIds?: Array<number | string>) => {
+        if (level) {
+            console.log(commentsIds);
+            axios.post("/new-reply-comment",{
+                params: {
+                    userId: user._id,
+                    commentText: commentText,
+                    summaryId: props.selectedPost._id,
+                    level: level,
+                    ancestors: commentsIds
+                }
+            }).then(async ()=>{
+                axios.post('/full-summary',{
+                    params:{
+                        summaryId: props.selectedPost._id
+                    }
+                }).then((response)=>{
+                    console.log(response.data);
+                    dispatch({type: 'EXTEND_POST', payload: response.data});
+                }).then(()=>{
+                    setComments(selectedPost.comments ? selectedPost.comments : comments);
+                })
+            }).catch((err)=>{
+                console.log(err);
+            });
+        }
+        else {
+            axios.post("/new-comment",{
+                params: {
+                    userId: user._id,
+                    commentText: commentText,
                     summaryId: props.selectedPost._id
                 }
-            }).then((response)=>{
-                console.log(response.data);
-                dispatch({type: 'EXTEND_POST', payload: response.data});
-            }).then(()=>{
-                setComments(selectedPost.comments ? selectedPost.comments : comments);
-            })
-        }).catch((err)=>{
-            console.log(err);
-        });
+            }).then(async ()=>{
+                axios.post('/full-summary',{
+                    params:{
+                        summaryId: props.selectedPost._id
+                    }
+                }).then((response)=>{
+                    console.log(response.data);
+                    dispatch({type: 'EXTEND_POST', payload: response.data});
+                }).then(()=>{
+                    setComments(selectedPost.comments ? selectedPost.comments : comments);
+                })
+            }).catch((err)=>{
+                console.log(err);
+            });
+        }
 
         event.preventDefault();
     }
@@ -62,7 +89,8 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
                 
                 <CommentsListMemo comments={comments} 
                                 reply={ReplyForm}
-                                submitFunction={postComment} />
+                                submitFunction={postComment}
+                                level={1} />
 
                 <ReplyForm submitFunction={postComment} />
                     

@@ -9,6 +9,27 @@ import { Mongoose, LeanDocument } from "mongoose";
 import { retrieveArticleSchema, retrieveSummarySchema, SummaryBE, retrieveTagSchema, TagBE, retrieveUserSchema, retrieveCommentSchema } from "../schemas";
 
 
+/**
+ * util function autoPopulateCommentsInSummary:
+ * 
+ * preps summary model with auto-population of comments model.
+ * works only with findOne function (middleware).
+ * 
+ * @param mongoose mongoose object
+ */
+export function autoPopulateCommentsInSummary(mongoose: Mongoose){
+  const summarySchema = retrieveSummarySchema(mongoose);
+  summarySchema.pre("findOne",function(next){
+    this.populate('comments');
+    console.log("auto-population: this works");
+    next();
+  });
+  summarySchema.pre("save",function(next){
+    this.populate('comments');
+    console.log("auto-population: this works");
+    next();
+  });
+}
 
 /**
  * util function newSummary:
@@ -189,7 +210,7 @@ import { retrieveArticleSchema, retrieveSummarySchema, SummaryBE, retrieveTagSch
   
       const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
       const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
-      //const CommentModel = mongoose.models.Comment || mongoose.model('Comment', retrieveCommentSchema(mongoose));
+      const CommentModel = mongoose.models.Comment || mongoose.model('Comment', retrieveCommentSchema(mongoose));
       const ArticleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
       const TagModel = mongoose.models.Tag || mongoose.model('Tag', retrieveTagSchema(mongoose));
   
@@ -200,8 +221,12 @@ import { retrieveArticleSchema, retrieveSummarySchema, SummaryBE, retrieveTagSch
                     populate: { path:  'user',
                             model: 'User' }
                   })
+                  .populate({
+                    path:     'comments',			
+                    populate: { path:  'comments',
+                            model: 'Comment' }
+                  }).populate('comments')
                   .lean().exec().then((result: LeanDocument<SummaryBE>)=>{
-                    console.log(result);
                     res.send(result);
           }).catch((err)=>{
             console.log(err);

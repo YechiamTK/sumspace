@@ -63,7 +63,8 @@ export interface Comment {
     text : string,
     date : Date,
     comments? : Array<Comment>,
-    likes : number
+    likes : number,
+    ancestors: Array<number | string>
 }
 
 /**

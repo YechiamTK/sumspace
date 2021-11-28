@@ -132,6 +132,17 @@ export function retrieveSummarySchema(mongoose: Mongoose){
         article : {type:mongoose.Schema.Types.ObjectId, ref: 'Article', required: true},
         tags : [{type:mongoose.Schema.Types.ObjectId, ref: 'Tag'}]
     });
+
+    summarySchema.pre("findOne",function(next){
+        this.populate('comments');
+        console.log("auto-population: findOne works");
+        next();
+    });
+    summarySchema.pre("save",function(next){
+        this.populate('comments');
+        console.log("auto-population: save works");
+        next();
+    });
     
     return (summarySchema);
 }
@@ -150,14 +161,16 @@ export function retrieveSummarySchema(mongoose: Mongoose){
  * @param date publish date of the comment
  * @param comments an array of type Comment
  * @param likes
+ * @param ancestors list of comment's parents
  */
  export function retrieveCommentSchema(mongoose: Mongoose){
     const commentSchema = new mongoose.Schema<CommentBE>({
         user : {type:mongoose.Schema.Types.ObjectId, ref: 'User', required : true},
         text : {type: String, required: true},
         date : {type:Date, required: true},
-        comments : [{type:mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
-        likes : {type: Number, required: true}
+        comments : [{type:mongoose.Schema.Types.Mixed, ref: 'Comment'}],
+        likes : {type: Number, required: true},
+        ancestors: [{type: mongoose.Schema.Types.ObjectId}]
     });
 
     return (commentSchema);

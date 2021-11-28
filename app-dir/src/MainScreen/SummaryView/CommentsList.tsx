@@ -4,7 +4,7 @@ import { Comment, CommentGroup, Header } from 'semantic-ui-react';
 import { replyFormProps } from "./ReplyForm";
 
 
-interface CommentsProps extends replyFormProps {
+interface CommentsProps extends Omit<replyFormProps, "hideForm"> {
     comments: CommentFE[],
     reply: any //I'll figure it out later, should be ReplyForm's type
 }
@@ -14,6 +14,7 @@ const CommentsList = (props: CommentsProps) => {
     const comments = props.comments;
     const hasComments = comments && comments.length;
     const [replyForm, showReplyForm] = useState([false,0]);
+    const thisLevel = props.level;
 
     /**
      * short explanation:
@@ -43,15 +44,24 @@ const CommentsList = (props: CommentsProps) => {
                                         <a onClick={()=>{
                                             showReplyForm([!replyForm[0], comment._id]);
                                         }}>reply</a>
-                                        {replyForm[0] && replyForm[1]==comment._id ? (<props.reply key={comment._id+1} {...props} />) : <></>}
+                                        {replyForm[0] && replyForm[1]==comment._id ? 
+                                            (<props.reply 
+                                                key={comment._id+1} 
+                                                commentsIds={comment.ancestors ? comment.ancestors.concat(comment._id) : [comment._id]}
+                                                hideForm={()=>{showReplyForm([!replyForm[0], comment._id])}}
+                                                {...props} />
+                                            ) 
+                                            : <></>
+                                        }
                                     </Comment.Actions>
                                 </Comment.Content>
                                 {comment.comments && comment.comments.length ? 
                                     (
                                     <CommentGroup>
                                         <CommentsListMemo comments={comment.comments} 
-                                                        reply={<props.reply {...props} />} 
-                                                        submitFunction={props.submitFunction} />
+                                                        reply={props.reply}
+                                                        submitFunction={props.submitFunction}
+                                                        level={(thisLevel ? thisLevel + 1 : undefined)} />
                                     </CommentGroup>
                                     )
                                     :

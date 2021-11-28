@@ -12,9 +12,9 @@ import path from 'path';
 import { Mongoose } from 'mongoose';
 import { newArticle, getArticlesNamesAndOid, getArticlesNames } from './server_utils/restful_connections/article';
 import { newAuthor, getAuthors, getAuthorsNames } from './server_utils/restful_connections/author';
-import { newComment } from './server_utils/restful_connections/comment';
+import { newComment, newReplyToComment } from './server_utils/restful_connections/comment';
 import { loadFile } from './server_utils/restful_connections/util';
-import { getSummaries, newSummary, fullSummary } from './server_utils/restful_connections/summary';
+import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary } from './server_utils/restful_connections/summary';
 import { getTags, findTagsOid, newTags } from './server_utils/restful_connections/tag';
 import { loginUser, registerUser } from './server_utils/restful_connections/user';
 
@@ -33,6 +33,8 @@ app.use(express.static('../app-dir/build'));
 //const mongo = connectToDb(db);
 const mongoose = new Mongoose();
 
+//for debugging purposes, uncomment this line
+//mongoose.set('debug', true);
 
 const options = {
   serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
@@ -68,7 +70,9 @@ mongoose.connect(db, options).then(async ()=>{
     newTags(router, mongoose);
 
     //set up comment api
+    autoPopulateCommentsInSummary(mongoose);
     newComment(router, mongoose);
+    newReplyToComment(router, mongoose);
     
     
     // Handles any requests that don't match the ones above
