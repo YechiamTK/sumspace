@@ -7,8 +7,9 @@
 
 
 import axios from "axios";
-import React from "react";
-import { Card, Grid, Rating, RatingProps } from "semantic-ui-react";
+import React, { useEffect } from "react";
+import { Card, Grid, Icon, Rating, RatingProps } from "semantic-ui-react";
+import { usePostsContext } from "../../Context/Store";
 import { SummaryFE } from "../../DataTypes/schemas";
 
 interface SummaryProps{
@@ -16,6 +17,7 @@ interface SummaryProps{
 }
 export const SummaryView = (props: SummaryProps):JSX.Element => {
 
+    const {dispatch} = usePostsContext();
     const selectedPost = props.selectedPost;
     //console.log("current rating: " + selectedPost.rating[0]);
 
@@ -28,6 +30,35 @@ export const SummaryView = (props: SummaryProps):JSX.Element => {
             }
         }).then((response)=>{
             console.log("rated " + response.data.rating + "stars!");
+            //I need to understand how to simply useEffect it always
+            axios.post('/full-summary',{
+                params:{
+                    summaryId: selectedPost._id
+                }
+            }).then((response)=>{
+                console.log(response.data);
+                dispatch({type: 'EXTEND_POST', payload: response.data});
+            })
+        })
+    }
+
+    const like = () => {
+        axios.post('/like-summary', {
+            params:
+            {
+                summaryId: selectedPost._id
+            }
+        }).then((response)=>{
+            console.log(response.data.likes + "likes!");
+            //I need to understand how to simply useEffect it always
+            axios.post('/full-summary',{
+                params:{
+                    summaryId: selectedPost._id
+                }
+            }).then((response)=>{
+                console.log(response.data);
+                dispatch({type: 'EXTEND_POST', payload: response.data});
+            })
         })
     }
 
@@ -41,7 +72,10 @@ export const SummaryView = (props: SummaryProps):JSX.Element => {
                     <Card.Content textAlign='right' meta={new Date(selectedPost.publishDate).toLocaleString()} />
                     <Card.Content extra textAlign="left">
                         <Rating icon='star' defaultRating={selectedPost.rating[0]} maxRating={5} onRate={rate} />
-                        <span style={{float: "right"}}>{"Likes: "  + selectedPost.likes}</span>
+                        <span style={{float: "right"}}>
+                            <Icon name='like' onClick={like} />
+                            {selectedPost.likes + " Likes"}
+                        </span>
                     </Card.Content>
                     {selectedPost.tags && selectedPost.tags.length > 0 ? 
                         <Card.Content extra>

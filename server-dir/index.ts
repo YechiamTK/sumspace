@@ -14,7 +14,7 @@ import { newArticle, getArticlesNamesAndOid, getArticlesNames } from './server_u
 import { newAuthor, getAuthors, getAuthorsNames } from './server_utils/restful_connections/author';
 import { newComment, newReplyToComment } from './server_utils/restful_connections/comment';
 import { loadFile } from './server_utils/restful_connections/util';
-import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary, rateSummary } from './server_utils/restful_connections/summary';
+import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary, rateSummary, likeSummary } from './server_utils/restful_connections/summary';
 import { getTags, findTagsOid, newTags } from './server_utils/restful_connections/tag';
 import { loginUser, registerUser } from './server_utils/restful_connections/user';
 
@@ -64,6 +64,7 @@ mongoose.connect(db, options).then(async ()=>{
     newSummary(router, mongoose);
     fullSummary(router, mongoose);
     rateSummary(router, mongoose);
+    likeSummary(router, mongoose);
 
     //set up tag api
     getTags(router, mongoose);

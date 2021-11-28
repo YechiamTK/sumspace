@@ -235,11 +235,13 @@ export function autoPopulateCommentsInSummary(mongoose: Mongoose){
   }
   
 /**
-   * util function fullSummary
+   * util function rateSummary
    * 
-   * returns fully populated summary
+   * add another rating to the summary.
+   * calculates the rating accumulatively.
+   * rating[0] => the total rating.
    * 
-   * expects summary id
+   * expects summary id and currently new rating
    * 
    * @param router express router to be used
    * @param mongoose mongoose object
@@ -265,6 +267,42 @@ export async function rateSummary(router: Router, mongoose: Mongoose){
         else{
           console.log("rate-summary: managed to save the summary");
           res.send({"rating": summary.rating[0]});
+        }
+      });
+    });
+  });
+}
+
+
+/**
+   * util function likeSummary
+   * 
+   * add another like to the summary.
+   * calculates the rating accumulatively.
+   * 
+   * expects summary id
+   * 
+   * @param router express router to be used
+   * @param mongoose mongoose object
+   */
+ export async function likeSummary(router: Router, mongoose: Mongoose){
+  router.post('/like-summary', (req: Request, res: Response)=>{
+    const { summaryId } = req.body.params;
+
+    console.log("like-summary: entered like summary");
+    
+    const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+
+    summaryModel.findOne({'_id': summaryId}).exec().then(async (result: any /* my types aren't good enough */)=>{
+      console.log("like-summary: found the summary with id: " + result._id);
+      result.likes += 1;
+
+      await result.save((err:any,summary:SummaryBE)=>{
+        if (err)
+          res.send("Error occured! " + err);
+        else{
+          console.log("like-summary: managed to save the summary");
+          res.send({"likes": summary.likes});
         }
       });
     });
