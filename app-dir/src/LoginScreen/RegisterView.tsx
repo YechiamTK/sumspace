@@ -1,3 +1,12 @@
+/**
+ * RegisterView: the registration form view.
+ * 
+ * Requires props:
+ *  - viewChange - mouse event to change between login and register views
+ * 
+ */
+
+
 import axios from 'axios';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import { Button, ButtonProps, Form, Header, InputProps } from 'semantic-ui-react';
@@ -39,6 +48,7 @@ const RegisterView = (props : registerViewProps):JSX.Element => {
         setPasswordAgain(target.value);
     }
 
+    //sends given info to BE and registers the user to the db
     const attemptRegister = (event: FormEvent<HTMLFormElement>) => {
         if (password == passwordAgain){
             axios.post('/register', {

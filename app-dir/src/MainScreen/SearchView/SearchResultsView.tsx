@@ -1,3 +1,10 @@
+/**
+ * SearchResultsView: presents the search results from the search bar.
+ * using Posts Context to transfer the results.
+ *  
+ */
+
+
 import { useHistory } from "react-router";
 import { Feed } from "semantic-ui-react";
 import { usePostsContext } from "../../Context/Store";

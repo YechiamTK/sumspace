@@ -1,9 +1,18 @@
+/**
+ * TopBar: the app's top bar.
+ * currently no so-much is going on here, but
+ * we do have functionality to switch between
+ * the different tabs.
+ * uses react-router's api.
+ *  
+ */
+
+
 import React from "react";
 import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { NewArticleModal } from "../NewArticleModal";
 import { NewSummaryModal } from "../NewSummaryModal";
-
 export const TopBar = ():JSX.Element => {
     
     //For now everyhing below is placeholder.

@@ -1,3 +1,9 @@
+/**
+ * SearchBarStyle: css-ing the search bar.
+ * mainly used for the transition effect.
+ * 
+ */
+
 
 export const SearchBarStyle = () => {
     

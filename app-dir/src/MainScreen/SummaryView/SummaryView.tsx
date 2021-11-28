@@ -1,3 +1,11 @@
+/**
+ * SummaryView: presents the summary.
+ * 
+ * @param props SummaryProps: selectedPost-> the currently viewed post
+ *  
+ */
+
+
 import React from "react";
 import { Card, Grid, Rating } from "semantic-ui-react";
 import { SummaryFE } from "../../DataTypes/schemas";
@@ -5,7 +13,6 @@ import { SummaryFE } from "../../DataTypes/schemas";
 interface SummaryProps{
     selectedPost: SummaryFE
 }
-
 export const SummaryView = (props: SummaryProps):JSX.Element => {
 
     const selectedPost = props.selectedPost;

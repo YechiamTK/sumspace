@@ -1,10 +1,13 @@
+/**
+ * Layout: the very bare-boned layout of the app.
+ * puts all of the different tabs in place.
+ * uses react-router's api.
+ * 
+ */
+
+
 import React from "react";
 import { Container, Grid } from "semantic-ui-react";
-/* import { MainView } from "./MainView";
-import { SearchBar } from "./SearchView/SearchBar";
-import { SearchResultsView } from "./SearchView/SearchResultsView";
-import { SidebarLeft } from "./SideBarLeft";
-import { SidebarRight } from "./SideBarRight"; */
 import { TopBar } from "./TopBar/TopBar";
 import { Route } from 'react-router-dom';
 import { SearchRoute } from "./SearchView/SearchRoute";
@@ -14,8 +17,6 @@ import { SummaryRoute } from "./SummaryView/SummaryRoute";
 
 
 export const Layout = ():JSX.Element => {
-
-    //const [triggerUpdate, setTriggerUpdate] = useState(false);
 
     return (
         <Container fluid>

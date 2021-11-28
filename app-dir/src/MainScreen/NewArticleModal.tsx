@@ -1,8 +1,12 @@
+/**
+ * NewArticleModal: a popup modal to insert new article to the db.
+ *  
+ */
+
+
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Form, InputProps, Menu, Modal } from "semantic-ui-react";
-
-
 export const NewArticleModal = ():JSX.Element => {
     
     /**Need to do:

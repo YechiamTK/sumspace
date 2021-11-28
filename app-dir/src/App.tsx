@@ -1,3 +1,11 @@
+/**
+ * App: root of the app.
+ * initializes our Store, Router, Layout etc.
+ * 
+ * also control our login screen, cause why not.
+ */
+
+
 import React, { useState } from 'react';
 import LoginScreen from './LoginScreen/LoginScreen';
 import { Grid } from 'semantic-ui-react';

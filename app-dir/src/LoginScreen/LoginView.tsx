@@ -1,3 +1,13 @@
+/**
+ * LoginView: the login form view.
+ * 
+ * Requires props:
+ *  - viewChange - mouse event to change between login and register views
+ *  - loginAction - triggering the login event
+ * 
+ */
+
+
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Button, ButtonProps, Form, Header, InputProps } from 'semantic-ui-react';
 import axios from 'axios';
@@ -25,6 +35,7 @@ const LoginView = (props : loginViewProps):JSX.Element => {
     setPassword(target.value);
   }
 
+  //send user info to BE and logs in the user
   const attemptLogin = (event: FormEvent<HTMLFormElement>) => {
     axios.post('/login', {
       params: {

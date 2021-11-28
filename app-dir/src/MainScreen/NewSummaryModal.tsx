@@ -1,3 +1,10 @@
+/**
+ * NewSummaryModal: a popup modal to insert new summary to the db.
+ * 
+ * @param props triggerUpdate-> currently not utilized.
+ */
+
+
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from "react";
 import { Button, DropdownItemProps, DropdownProps, Form, InputProps, Menu, Modal } from "semantic-ui-react";
@@ -7,7 +14,6 @@ import { useUserContext } from "../Context/Store";
 type SummaryModalProps = {
     triggerUpdate?: () => void
 }
-
 export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
     
     /**Need to do:

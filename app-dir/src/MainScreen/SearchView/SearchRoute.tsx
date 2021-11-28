@@ -1,3 +1,10 @@
+/**
+ * SearchRoute: root of the Search tab.
+ * provides the layout for the Search tab.
+ * 
+ */
+
+
 import { Grid } from "semantic-ui-react"
 import { SearchBar } from "./SearchBar"
 import { SearchResultsView } from "./SearchResultsView"

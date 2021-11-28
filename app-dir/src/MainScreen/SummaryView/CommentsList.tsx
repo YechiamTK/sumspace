@@ -1,3 +1,14 @@
+/**
+ * CommentsList: rendering all the comment section, recursively.
+ * 
+ * Extending ReplyForm's props (except hideForm), and requires
+ * the additional props:
+ *  - comments - the actual comments, CommentFE[] type
+ *  - reply - the reply form to render, a JSX Element (currently 'any')
+ * 
+ */
+
+
 import React, { useState } from "react";
 import { CommentFE } from "../../DataTypes/schemas";
 import { Comment, CommentGroup, Header } from 'semantic-ui-react';
@@ -24,8 +35,6 @@ const CommentsList = (props: CommentsProps) => {
      * so we recursively render the CommentsList again, with the child
      * comments object.
      * also for each reply form there's a show/hide mechanism.
-     * each reply form should reach postComment function, will need to make
-     * sure it works properly.
      */
     return(
         <>

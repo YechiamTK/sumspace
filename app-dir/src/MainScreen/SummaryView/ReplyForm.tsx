@@ -1,14 +1,3 @@
-import React, { useState } from "react";
-import { Button, Form, InputProps } from "semantic-ui-react";
-
-
-export interface replyFormProps{
-    level?: number,
-    commentsIds?: Array<number | string>,
-    submitFunction: (event: React.FormEvent<HTMLFormElement>, reply: string, level?: number, commentdsIds?: Array<number | string>) => void,
-    hideForm?: () => void
-}
-
 /**
  * ReplyForm: generic reply form. perhaps will move it outside SummaryView
  * and in Generics. accepts an outside submit function and a form hiding function.
@@ -21,6 +10,19 @@ export interface replyFormProps{
  *                              - hideForm-> outside function call to automatically hide the form on submit
  * @returns JSX.Element
  */
+
+
+import React, { useState } from "react";
+import { Button, Form, InputProps } from "semantic-ui-react";
+
+
+export interface replyFormProps{
+    level?: number,
+    commentsIds?: Array<number | string>,
+    submitFunction: (event: React.FormEvent<HTMLFormElement>, reply: string, level?: number, commentdsIds?: Array<number | string>) => void,
+    hideForm?: () => void
+}
+
 export const ReplyForm = (props: replyFormProps):JSX.Element => {
 
     const [replyText, replyTextChange] = useState("");

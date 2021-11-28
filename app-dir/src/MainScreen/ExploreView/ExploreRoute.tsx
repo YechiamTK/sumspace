@@ -1,3 +1,10 @@
+/**
+ * ExploreRoute: root of the Explore tab.
+ * receives exploratory relevant information and displays it interactively.
+ * 
+ */
+
+
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { List } from "semantic-ui-react"
@@ -11,6 +18,8 @@ export const ExploreRoute = ():JSX.Element => {
     const [tags, setTags] = useState<Array<tagJson>>([]);
     const [authors, setAuthors] = useState<Array<authorJson>>([]);
 
+    
+    //receive relevant tags
     useEffect(()=>{
         axios.get('/get-tags').then((response) => {
             if (response.data !== typeof String)
@@ -20,6 +29,7 @@ export const ExploreRoute = ():JSX.Element => {
         });
     }, []);
 
+    //receive relevant authors
     useEffect(()=>{
         axios.get('/get-authors').then((response) => {
             if (response.data !== typeof String)

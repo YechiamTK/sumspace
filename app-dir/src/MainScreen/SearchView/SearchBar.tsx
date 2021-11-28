@@ -1,3 +1,10 @@
+/**
+ * SearchBar: the search bar of the search view.
+ * displays the summaries interactively using partial-search search results.
+ * 
+ */
+
+
 import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router";
