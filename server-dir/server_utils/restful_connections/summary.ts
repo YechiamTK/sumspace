@@ -234,3 +234,39 @@ export function autoPopulateCommentsInSummary(mongoose: Mongoose){
     })
   }
   
+/**
+   * util function fullSummary
+   * 
+   * returns fully populated summary
+   * 
+   * expects summary id
+   * 
+   * @param router express router to be used
+   * @param mongoose mongoose object
+   */
+export async function rateSummary(router: Router, mongoose: Mongoose){
+  router.post('/rate-summary', (req: Request, res: Response)=>{
+    const { summaryId, rating } = req.body.params;
+
+    console.log("rate-summary: entered rate summary");
+    
+    const summaryModel = mongoose.models.Summary || mongoose.model('Summary', retrieveSummarySchema(mongoose));
+
+    summaryModel.findOne({'_id': summaryId}).exec().then(async (result: any /* my types aren't good enough */)=>{
+      console.log("rate-summary: found the summary with id: " + result._id);
+      result.rating.push(rating);
+      result.rating[0] = result.rating.slice(1).reduce((a:number,b:number)=>a+b,0)/result.rating.length;
+
+      await result.save((err:any,summary:SummaryBE)=>{
+        console.log("rate-summary: err is: " + err);
+        console.log("rate-summary: summary is: " + summary);
+        if (err)
+          res.send("Error occured! " + err);
+        else{
+          console.log("rate-summary: managed to save the summary");
+          res.send({"rating": summary.rating[0]});
+        }
+      });
+    });
+  });
+}

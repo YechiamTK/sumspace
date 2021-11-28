@@ -14,7 +14,7 @@ import { newArticle, getArticlesNamesAndOid, getArticlesNames } from './server_u
 import { newAuthor, getAuthors, getAuthorsNames } from './server_utils/restful_connections/author';
 import { newComment, newReplyToComment } from './server_utils/restful_connections/comment';
 import { loadFile } from './server_utils/restful_connections/util';
-import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary } from './server_utils/restful_connections/summary';
+import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary, rateSummary } from './server_utils/restful_connections/summary';
 import { getTags, findTagsOid, newTags } from './server_utils/restful_connections/tag';
 import { loginUser, registerUser } from './server_utils/restful_connections/user';
 
@@ -34,7 +34,7 @@ app.use(express.static('../app-dir/build'));
 const mongoose = new Mongoose();
 
 //for debugging purposes, uncomment this line
-//mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 const options = {
   serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
@@ -63,6 +63,7 @@ mongoose.connect(db, options).then(async ()=>{
     getSummaries(router, mongoose);
     newSummary(router, mongoose);
     fullSummary(router, mongoose);
+    rateSummary(router, mongoose);
 
     //set up tag api
     getTags(router, mongoose);

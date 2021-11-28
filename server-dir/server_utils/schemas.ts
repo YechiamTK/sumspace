@@ -99,7 +99,7 @@ export function retrieveArticleSchema(mongoose: Mongoose){
  * 
  * @param user of type User
  * @param comments an array of type Comment
- * @param rating numerical representation of the summary's worth
+ * @param rating numerical representation of the summary's worth, accomulating
  * @param likes
  * @param publishDate of type Date
  * @param article of type Article
@@ -126,7 +126,7 @@ export function retrieveSummarySchema(mongoose: Mongoose){
             ],
             {type: Number, required: true}
         ], */
-        rating : {type: Number, required: true},
+        rating : [{type: Number, required: true}],
         likes : {type: Number, required: true},
         publishDate : {type: Date, required: true},
         article : {type:mongoose.Schema.Types.ObjectId, ref: 'Article', required: true},

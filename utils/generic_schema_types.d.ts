@@ -45,7 +45,7 @@ export interface Summary {
     user : User | string | number,
     summary: string,
     comments? : Array<Comment>,
-    rating? : number,
+    rating : Array<number>,
     likes : number,
     publishDate : Date,
     article : Article | string | number,

@@ -50,7 +50,7 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
           params: {
             userId: user._id,
             summaryText: summaryText,
-            rating: 0,
+            rating: [0],
             likes: 0,
             publishDate: new Date().toLocaleDateString(),
             article: selectedArticle

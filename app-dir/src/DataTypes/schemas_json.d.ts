@@ -22,7 +22,7 @@ export interface SummaryJson {
     user: number,
     summary: string,
     comments: Array<number>,
-    rating: number,
+    rating: Array<number>,
     likes: number,
     publishDate: Date,
     article: number,

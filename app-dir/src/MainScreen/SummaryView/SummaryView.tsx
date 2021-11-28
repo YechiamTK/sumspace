@@ -6,8 +6,9 @@
  */
 
 
+import axios from "axios";
 import React from "react";
-import { Card, Grid, Rating } from "semantic-ui-react";
+import { Card, Grid, Rating, RatingProps } from "semantic-ui-react";
 import { SummaryFE } from "../../DataTypes/schemas";
 
 interface SummaryProps{
@@ -16,6 +17,19 @@ interface SummaryProps{
 export const SummaryView = (props: SummaryProps):JSX.Element => {
 
     const selectedPost = props.selectedPost;
+    //console.log("current rating: " + selectedPost.rating[0]);
+
+    const rate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: RatingProps) => {
+        axios.post('/rate-summary', {
+            params:
+            {
+                summaryId: selectedPost._id,
+                rating: data.rating
+            }
+        }).then((response)=>{
+            console.log("rated " + response.data.rating + "stars!");
+        })
+    }
 
     return(
         <Grid.Row>
@@ -26,7 +40,7 @@ export const SummaryView = (props: SummaryProps):JSX.Element => {
                     <Card.Content textAlign='left' style={{'white-space': 'pre-wrap'}} description={selectedPost.summary} />
                     <Card.Content textAlign='right' meta={new Date(selectedPost.publishDate).toLocaleString()} />
                     <Card.Content extra textAlign="left">
-                        <Rating icon='star' defaultRating={selectedPost.rating} maxRating={5} onRate={()=>{console.log('rated')}} />
+                        <Rating icon='star' defaultRating={selectedPost.rating[0]} maxRating={5} onRate={rate} />
                         <span style={{float: "right"}}>{"Likes: "  + selectedPost.likes}</span>
                     </Card.Content>
                     {selectedPost.tags && selectedPost.tags.length > 0 ? 
