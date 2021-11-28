@@ -1,3 +1,13 @@
+/**
+ * UserContext: a Context API methods for user control in the app.
+ * 
+ * Provides (and exports) several essential methods:
+ * - inital state
+ * - reducer
+ * - context creator
+ */
+
+
 import { createContext } from "react";
 import { userState, Action, Dispatch } from "../DataTypes/context";
 

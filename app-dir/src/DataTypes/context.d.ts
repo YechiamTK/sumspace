@@ -1,3 +1,15 @@
+/**
+ * context: ts types for Context API usage.
+ * 
+ * Provides (and exports) several essential types:
+ * - states
+ * - action
+ * - dispatch
+ * - contexts
+ * - strore props
+ */
+
+
 import {UserFE, SummaryFE, TagFE} from './schemas';
 
 //TYPES
@@ -22,7 +34,6 @@ export type Action =
     | {type: 'SELECT_POST', payload: number | string}
     | {type: 'EXTEND_POST', payload: SummaryFE}
     | {type: 'EMPTY_POSTS'};
-    //perhaps more types in the future
 
 export type Dispatch = (action: Action) => void;
 

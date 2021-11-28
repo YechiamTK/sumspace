@@ -1,3 +1,12 @@
+/**
+ * Store: setting up the Store for the Context API of the app.
+ * 
+ * Provides (and exports) several essential methods:
+ * - Store creator
+ * - different Context creators
+ */
+
+
 import { useContext, useReducer } from 'react';
 import { postsContext, StoreProps, userContext } from '../DataTypes/context';
 import { PostsContext, postsInitalState, postsReducer } from './PostsContext';
@@ -20,6 +29,8 @@ export const Store = ({children}:StoreProps):JSX.Element => {
   );
 };
 
+//User Context creation
+
 export const useUserContext = ():userContext => {
   const context = useContext(UserContext);
   if (context === undefined)
@@ -27,6 +38,8 @@ export const useUserContext = ():userContext => {
   else
     return context;
 }
+
+//Posts Context creation
 
 export const usePostsContext = ():postsContext => {
   const context = useContext(PostsContext);
