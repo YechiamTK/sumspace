@@ -10,23 +10,45 @@ import { retrieveAuthorSchema, retrieveArticleSchema, ArticleBE } from "../schem
 
 
 
+export class Articles{
 
-/**
- * util function newArticle:
- * 
- * inserts a new article from the given author.
- * @param router express router to be used
- */
-export async function newArticle(router: Router, mongoose: Mongoose){
-    router.post('/new-article',async (req: Request, res: Response)=>{
-      console.log("entered new-article");
+  router: Router;
+  mongoose: Mongoose;
+
+
+  constructor (router: Router, mongoose: Mongoose) {
+    this.router = router;
+    this.mongoose = mongoose;
+    this.newArticle();
+    this.getArticles();
+    //---add any additional functions here---
+  }
+
+
+
+  
+  /**
+   * util function newArticle:
+   * 
+   * creates a new article with given parameters.
+   * 
+   * @param title
+   * @param author
+   * @param publishDate
+   * @param link
+   * @param tags
+   * 
+   */
+  async newArticle() {
+    this.router.post('/articles', async (req: Request, res: Response)=>{
+      console.log("entered /articles in a post method (new article)");
       const {title, author, publishDate, link, tags} = req.body.params;
       console.log("new-article: " + req.body.params);
       
       //recieve author's id
-      const authorModel = mongoose.models.Author || mongoose.model('Author', retrieveAuthorSchema(mongoose));
+      const authorModel = this.mongoose.models.Author || this.mongoose.model('Author', retrieveAuthorSchema(this.mongoose));
       console.log("new-article: connected to author model");
-      let authorId = mongoose.Types.ObjectId;
+      let authorId = this.mongoose.Types.ObjectId;
       await authorModel.findOne({
         params: {
           name: author
@@ -47,7 +69,7 @@ export async function newArticle(router: Router, mongoose: Mongoose){
       console.log(tagsIds); */
   
       //save the article
-      const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+      const articleModel = this.mongoose.models.Article || this.mongoose.model('Article', retrieveArticleSchema(this.mongoose));
       console.log("new-article: connected to article model");
       const article = new articleModel({
         title: title,
@@ -68,56 +90,54 @@ export async function newArticle(router: Router, mongoose: Mongoose){
         }
       });
     });
-}
-  
-/**
- * util function getAuthors:
- * 
- * returns authors' names list.
- * @param router express router to be used
- */
-export async function getArticlesNamesAndOid(router: Router, mongoose: Mongoose){
-    router.get('/get-articles-names-oid',async (req: Request, res: Response)=>{
-      console.log("entered get-articles-names-oid");
-      
-      const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
-      console.log("get-articles-names-oid: connected to article model");
-      let articles = new Array<any>(); //want it to work first
-      await articleModel.find({}).select('title').exec().then((result: Array<ArticleBE>)=>{
-        console.log("get-articles-names-oid: result type is: " + typeof(result));
-        articles = result;
-        console.log("get-articles-names-oid: " + articles);
-        res.send(articles);
-    }).catch((err)=>{
-          console.log("get-articles-names-oid: An error has accured: " + err);
-      });
-      
-      //need to insert check before send
-    });
-}
+  }
 
-/**
- * util function getAuthors:
- * 
- * returns authors' names list.
- * @param router express router to be used
- */
-export async function getArticlesNames(router: Router, mongoose: Mongoose){
-    router.get('/get-articles-names',async (req: Request, res: Response)=>{
-      console.log("entered get-articles");
+  /**
+   * util function getArticles:
+   * 
+   * returns articles with given query (id and fields).
+   * 
+   * @param id "" for all, otherwise Oid
+   * @param query fields to select, in the format "field field field"
+   *              optional: removing a field (such as id): "-_id"
+   *              for example: "title author -_id"
+   * 
+   */
+  async getArticles(){
+    this.router.get('/articles/:id/q/:query',async (req: Request, res: Response)=>{
+      console.log("entered /articles with get method (recieve articles with given parameters)");
       
-      const articleModel = mongoose.models.Article || mongoose.model('Article', retrieveArticleSchema(mongoose));
+      const {id, query} = req.params;
+      
+      //check if id and query are fine
+      console.log(typeof(id), typeof(query));
+      //if (typeof id != typeof(""))
+
+      const articleModel = this.mongoose.models.Article || this.mongoose.model('Article', retrieveArticleSchema(this.mongoose));
       console.log("get-articles: connected to article model");
-      let articles = new Array<any>(); //want it to work first
-      await articleModel.find({}).select('title -_id').exec().then((result: Array<ArticleBE>)=>{
-        console.log("get-articles: result type is: " + typeof(result));
-        articles = result.map(({title})=>title);
-        console.log("get-articles: " + articles);
-        res.send(articles);
-    }).catch((err)=>{
-          console.log("get-articles: An error has accured: " + err);
-      });
+
+      if (id == ""){
+        await articleModel.find({}).select(query).exec().then((result: Array<ArticleBE>)=>{
+          console.log("get-articles: result type is: " + typeof(result));
+          //articles = result;
+          //console.log("get-articles-names-oid: " + articles);
+          res.json(JSON.stringify(result));
+        }).catch((err)=>{
+            console.log("get-articles-names-oid: An error has accured: " + err);
+        });
+      }
+      else {
+        await articleModel.findOne({_id: id}).select(query).exec().then((result: ArticleBE)=>{
+          console.log("get-articles: result type is: " + typeof(result));
+          //articles = result;
+          //console.log("get-articles-names-oid: " + articles);
+          res.json(JSON.stringify(result));
+        }).catch((err)=>{
+            console.log("get-articles: An error has accured: " + err);
+        });
+      }
       
       //need to insert check before send
     });
+  }
 }

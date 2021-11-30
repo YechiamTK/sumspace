@@ -10,13 +10,13 @@ import path from 'path';
 //import { connectToDb, keepAwake } from './utils/db_connections';
 
 import { Mongoose } from 'mongoose';
-import { newArticle, getArticlesNamesAndOid, getArticlesNames } from './server_utils/restful_connections/article';
-import { newAuthor, getAuthors, getAuthorsNames } from './server_utils/restful_connections/author';
-import { newComment, newReplyToComment } from './server_utils/restful_connections/comment';
+import { Articles } from './server_utils/restful_connections/article';
+import { Authors } from './server_utils/restful_connections/author';
+import { Comments } from './server_utils/restful_connections/comment';
+import { Summaries } from './server_utils/restful_connections/summary';
+import { Tags } from './server_utils/restful_connections/tag';
+import { Users } from './server_utils/restful_connections/user';
 import { loadFile } from './server_utils/restful_connections/util';
-import { getSummaries, newSummary, fullSummary, autoPopulateCommentsInSummary, rateSummary, likeSummary } from './server_utils/restful_connections/summary';
-import { getTags, findTagsOid, newTags } from './server_utils/restful_connections/tag';
-import { loginUser, registerUser } from './server_utils/restful_connections/user';
 
 
 //set up useful consts:
@@ -46,35 +46,22 @@ mongoose.connect(db, options).then(async ()=>{
   console.log("Successfully connected to the db!");
   try {
     //set up login screen api
-    loginUser(router, mongoose);
-    registerUser(router, mongoose);
+    let users = new Users(router, mongoose);
 
     //set up author api
-    newAuthor(router, mongoose);
-    getAuthors(router, mongoose);
-    getAuthorsNames(router, mongoose);
+    let authors = new Authors(router, mongoose);
    
     //set up articles api
-    newArticle(router, mongoose);
-    getArticlesNamesAndOid(router, mongoose);
-    getArticlesNames(router, mongoose);
+    let articles = new Articles(router, mongoose);
 
     //set up summary api
-    getSummaries(router, mongoose);
-    newSummary(router, mongoose);
-    fullSummary(router, mongoose);
-    rateSummary(router, mongoose);
-    likeSummary(router, mongoose);
+    let summaries = new Summaries(router, mongoose);
 
     //set up tag api
-    getTags(router, mongoose);
-    findTagsOid(router, mongoose);
-    newTags(router, mongoose);
+    let tags = new Tags(router, mongoose);
 
     //set up comment api
-    autoPopulateCommentsInSummary(mongoose);
-    newComment(router, mongoose);
-    newReplyToComment(router, mongoose);
+    let comments = new Comments(router, mongoose);
     
     
     // Handles any requests that don't match the ones above

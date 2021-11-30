@@ -8,54 +8,80 @@ import { Mongoose, LeanDocument } from "mongoose";
 import { retrieveUserSchema, UserBE } from "../schemas";
 
 
-/**
- * util function loginUser:
- * 
- * attempts to log in an existing user.
- * @param router express router to be used
- */
- export async function loginUser(router: Router, mongoose: Mongoose){
-    router.post('/login',async (req: Request, res: Response)=>{
-      console.log('Entered login process!');  //debug
-      const {username, password} = req.body.params;
-      const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
-      await userModel.findOne({'username': username, 'password': password}).lean().exec().then((result: LeanDocument<UserBE>)=>{
-        console.log('User ' + result.username + ' found!');
-        res.send(JSON.stringify(result));
-      });/* .catch(exception){
-        console.log("An Error has occured!");
-        console.log(exception);
-      }; */
-    });
+
+export class Users{
+
+  router: Router;
+  mongoose: Mongoose;
+
+  constructor(router: Router, mongoose: Mongoose){
+    this.router = router;
+    this.mongoose = mongoose;
+    this.loginUser();
+    this.registerUser();
+    //---add any additional functions here---
   }
-  
+
+
+
   
   /**
-   * util function registerUser:
+   * util function loginUser:
    * 
-   * attempts to register a new user.
-   * @param router express router to be used
+   * attempts to log in an existing user.
+   * 
+   * @param username
+   * @param password
    */
-  export async function registerUser(router: Router, mongoose: Mongoose){
-    router.post('/register',async (req: Request, res: Response)=>{
-      const {username, firstName, lastName, password} = req.body.params;
-      console.log(req.body.params);
-      const userModel = mongoose.models.User || mongoose.model('User', retrieveUserSchema(mongoose));
-      console.log("connected to user model");
-      const newUser = new userModel({
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        password: password
+   async loginUser(){
+      this.router.post('/users/user/:username/pass/:password',async (req: Request, res: Response)=>{
+        console.log('Entered login process!');  //debug
+        const {username, password} = req.params;
+        const userModel = this.mongoose.models.User || this.mongoose.model('User', retrieveUserSchema(this.mongoose));
+        await userModel.findOne({'username': username, 'password': password}).lean().orFail().exec().then((result: LeanDocument<UserBE>)=>{
+          console.log('User ' + result.username + ' found!');
+          res.send(JSON.stringify(result));
+        }).catch((err)=>{
+          console.log("An Error has occured!" + err);
+          if (err.name == "DocumentNotFoundError") res.sendStatus(404);
+          else res.sendStatus(500);
+        });
       });
-      console.log("create new user named: " + newUser.username);
-      await newUser.save((err:any,user:UserBE)=>{
-        if (err){
-          console.log("An error has accured: " + err);
-        }
-        else{
+    }
+    
+    
+    /**
+     * util function registerUser:
+     * 
+     * attempts to register a new user.
+     * 
+     * @param username
+     * @param fname first name
+     * @param lname last name
+     * @param password
+     * 
+     */
+    async registerUser(){
+      this.router.post('/users/user/:username/fname/:fname/lname/:lname/pass/:password',async (req: Request, res: Response)=>{
+        const {username, fname, lname, password} = req.params;
+        //console.log(req.params);
+        const userModel = this.mongoose.models.User || this.mongoose.model('User', retrieveUserSchema(this.mongoose));
+        console.log("connected to user model");
+        const newUser = new userModel({
+          username: username,
+          firstName: fname,
+          lastName: lname,
+          password: password
+        });
+        console.log("create new user named: " + newUser.username);
+        await newUser.save((user:UserBE)=>{
           console.log("User registered successfuly!");
-        }
+          res.sendStatus(200);
+        }).catch((err: any)=>{
+          console.log("Error registering: " + err);
+          res.sendStatus(500);
+        });
       });
-    });
-  }
+    }
+
+}
