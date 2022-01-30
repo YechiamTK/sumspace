@@ -22,20 +22,11 @@ export const SummaryView = (props: SummaryProps):JSX.Element => {
     //console.log("current rating: " + selectedPost.rating[0]);
 
     const rate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: RatingProps) => {
-        axios.post('/rate-summary', {
-            params:
-            {
-                summaryId: selectedPost._id,
-                rating: data.rating
-            }
-        }).then((response)=>{
+        axios.post(`/summaries/${selectedPost._id}/action/rating-${data.rating}`)
+        .then((response)=>{
             console.log("rated " + response.data.rating + "stars!");
             //I need to understand how to simply useEffect it always
-            axios.post('/full-summary',{
-                params:{
-                    summaryId: selectedPost._id
-                }
-            }).then((response)=>{
+            axios.get(`/summaries/${selectedPost._id}`).then((response)=>{
                 console.log(response.data);
                 dispatch({type: 'EXTEND_POST', payload: response.data});
             })
@@ -43,19 +34,12 @@ export const SummaryView = (props: SummaryProps):JSX.Element => {
     }
 
     const like = () => {
-        axios.post('/like-summary', {
-            params:
-            {
-                summaryId: selectedPost._id
-            }
-        }).then((response)=>{
+        axios.post(`/summaries/${selectedPost._id}/action/like`)
+        .then((response)=>{
             console.log(response.data.likes + "likes!");
             //I need to understand how to simply useEffect it always
-            axios.post('/full-summary',{
-                params:{
-                    summaryId: selectedPost._id
-                }
-            }).then((response)=>{
+            axios.get(`/summaries/${selectedPost._id}`)
+            .then((response)=>{
                 console.log(response.data);
                 dispatch({type: 'EXTEND_POST', payload: response.data});
             })

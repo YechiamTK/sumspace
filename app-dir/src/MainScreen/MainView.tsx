@@ -40,7 +40,7 @@ export const MainView = (/* props: MainViewProps */):JSX.Element => {
     //const [loadContent, setLoadContent] = useState(false);
     
     const retrieveSummaries = async (amount: number | boolean, skip: number) => {
-        await axios.post('/get-summaries', {
+        await axios.get('/summaries', {
             params:
             {
             id: user._id,

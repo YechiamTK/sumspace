@@ -19,11 +19,7 @@ export const SummaryRoute = ():JSX.Element => {
 
     useEffect(() => {
         console.log(selectedPostId)
-        axios.post('/full-summary',{
-            params:{
-                summaryId: selectedPostId
-            }
-        }).then((response)=>{
+        axios.get(`/summaries/${selectedPostId}`).then((response)=>{
             console.log(response.data);
             dispatch({type: 'EXTEND_POST', payload: response.data});
         })

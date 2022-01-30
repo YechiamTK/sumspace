@@ -51,7 +51,7 @@ const RegisterView = (props : registerViewProps):JSX.Element => {
     //sends given info to BE and registers the user to the db
     const attemptRegister = (event: FormEvent<HTMLFormElement>) => {
         if (password == passwordAgain){
-            axios.post('/register', {
+            axios.post('/users', {
             params: {
                 username: username,
                 firstName: firstName,

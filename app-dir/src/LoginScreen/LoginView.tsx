@@ -37,7 +37,7 @@ const LoginView = (props : loginViewProps):JSX.Element => {
 
   //send user info to BE and logs in the user
   const attemptLogin = (event: FormEvent<HTMLFormElement>) => {
-    axios.post('/login', {
+    axios.post('/session', {
       params: {
         username: username,
         password: password

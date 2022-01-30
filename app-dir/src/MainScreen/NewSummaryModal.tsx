@@ -46,7 +46,7 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
 
     const postNewSummary = (event: FormEvent<HTMLFormElement>) => {
         console.log("entered postNewSummary");
-        axios.post('/new-summary', {
+        axios.post('/summaries', {
           params: {
             userId: user._id,
             summaryText: summaryText,
@@ -71,10 +71,7 @@ export const NewSummaryModal = (props: SummaryModalProps):JSX.Element => {
     const getArticles = () => {
         let articles = new Array<any>();
         let options = new Array<DropdownItemProps>();
-        axios.get('/get-articles-names', {
-            params: {
-            }
-        }).then((response)=>{
+        axios.get('/articles/').then((response)=>{
             console.log("Received response: " + response.data);
             articles = response.data;
             console.log("articles are: " + articles);

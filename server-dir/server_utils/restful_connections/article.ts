@@ -20,6 +20,7 @@ export class Articles{
     this.router = router;
     this.mongoose = mongoose;
     this.newArticle();
+    this.getAllArticles();
     this.getArticles();
     //---add any additional functions here---
   }
@@ -93,6 +94,34 @@ export class Articles{
   }
 
   /**
+   * util function getAllArticles:
+   * 
+   * returns all articles in the db.
+   * 
+   */
+  async getAllArticles(){
+    this.router.get('/articles',async (req: Request, res: Response)=>{
+      console.log("entered /articles with get method (recieve all articles)");
+
+      const articleModel = this.mongoose.models.Article || this.mongoose.model('Article', retrieveArticleSchema(this.mongoose));
+      console.log("get-articles: connected to article model");
+
+      //need to modernize: async/await and not promise.then
+      await articleModel.find({}).exec().then((result: Array<ArticleBE>)=>{
+        console.log("get-articles: result type is: " + typeof(result));
+        //articles = result;
+        //console.log("get-articles-names-oid: " + articles);
+        res.json(JSON.stringify(result));
+      }).catch((err)=>{
+          console.log("get-articles-names-oid: An error has accured: " + err);
+      });
+      
+      //need to insert check before send
+    });
+  }
+
+  
+  /**
    * util function getArticles:
    * 
    * returns articles with given query (id and fields).
@@ -103,7 +132,7 @@ export class Articles{
    *              for example: "title author -_id"
    * 
    */
-  async getArticles(){
+   async getArticles(){
     this.router.get('/articles/:id/q/:query',async (req: Request, res: Response)=>{
       console.log("entered /articles with get method (recieve articles with given parameters)");
       

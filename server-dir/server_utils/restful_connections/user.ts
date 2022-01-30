@@ -34,9 +34,9 @@ export class Users{
    * @param password
    */
    async loginUser(){
-      this.router.post('/users/user/:username/pass/:password',async (req: Request, res: Response)=>{
+      this.router.post('/session',async (req: Request, res: Response)=>{
         console.log('Entered login process!');  //debug
-        const {username, password} = req.params;
+        const {username, password} = req.body.params;
         const userModel = this.mongoose.models.User || this.mongoose.model('User', retrieveUserSchema(this.mongoose));
         await userModel.findOne({'username': username, 'password': password}).lean().orFail().exec().then((result: LeanDocument<UserBE>)=>{
           console.log('User ' + result.username + ' found!');
@@ -60,10 +60,11 @@ export class Users{
      * @param lname last name
      * @param password
      * 
+     * /user/:username/fname/:fname/lname/:lname/pass/:password
      */
     async registerUser(){
-      this.router.post('/users/user/:username/fname/:fname/lname/:lname/pass/:password',async (req: Request, res: Response)=>{
-        const {username, fname, lname, password} = req.params;
+      this.router.post('/users',async (req: Request, res: Response)=>{
+        const {username, fname, lname, password} = req.body.params;
         //console.log(req.params);
         const userModel = this.mongoose.models.User || this.mongoose.model('User', retrieveUserSchema(this.mongoose));
         console.log("connected to user model");

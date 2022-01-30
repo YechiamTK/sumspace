@@ -48,7 +48,7 @@ export const NewArticleModal = ():JSX.Element => {
         //first check if author already exists
         //perhaps should move this check to backend
         let authorsList = new Array<string>();
-        await axios.get('/get-authors-names').then((response)=>{
+        await axios.get('/authors//name:-_id').then((response)=>{
             authorsList = response.data;
             console.log('authors list is: ' + authorsList);
         }).catch((err)=>{
@@ -57,7 +57,7 @@ export const NewArticleModal = ():JSX.Element => {
         }).then(async ()=>{
             //if there's no author with that name, create a new one
             if (!(authorsList.includes(authorName))){
-                await axios.post('/new-author', {
+                await axios.post('/authors', {
                     params: {
                     name: authorName,
                     }
@@ -73,19 +73,18 @@ export const NewArticleModal = ():JSX.Element => {
 
             //first replace tags' names with their oids
             const splitTags = tags.split(',');
+            let concatedTags = tags.replace(',', '&');
             console.log('tags are: ' + splitTags + typeof(splitTags));
-            await axios.post('/new-tags', {
+            await axios.post('/tags', {
                 params:
                     {tags: splitTags}
             }).then(async (response)=>{
                 if (response.data == 'success'){
-                    console.log(splitTags);
-                    await axios.post('/find-tags-oid', {
-                        params: 
-                            {requestedTags: splitTags}
-                    }).then(async (response)=>{
+                    console.log(concatedTags);
+                    await axios.get(`/tags/q/tagName/${concatedTags}/`)
+                    .then(async (response)=>{
                         console.log(response.data);
-                        await axios.post('/new-article', {
+                        await axios.post('/articles', {
                             params: {
                                 title: articleName,
                                 author: authorName,

@@ -30,7 +30,7 @@ export const SearchBar = ():JSX.Element => {
     }
 
     const fetchResults = (event: FormEvent<HTMLFormElement>) => {
-        axios.post('/get-summaries',{
+        axios.get('/summaries',{
             params:
             {
                 search: searchInput

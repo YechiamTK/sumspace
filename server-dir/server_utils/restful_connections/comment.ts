@@ -36,7 +36,7 @@ export class Comments{
    * @param summaryId given in path
    */
   async newComment(){
-    this.router.post('/summaries/:id/comments/', async (req: Request, response: Response)=>{
+    this.router.put('/summaries/:id/comments/', async (req: Request, response: Response)=>{
       console.log("entered new-comment");
       const { summaryId } = req.params;
       const { userId, commentText } = req.body.params;
@@ -101,9 +101,10 @@ export class Comments{
    * @param mongoose
    */
    async newReplyToComment(){
-    this.router.post('/summaries/:id/comments/ancestors/:ids', async (req: Request, response: Response)=>{
+    this.router.put('/summaries/:id/comments/ancestors/:ids', async (req: Request, response: Response)=>{
       console.log("entered new-reply-comment");
-      const { summaryId, ancestors } = req.params;
+      const { summaryId } = req.params;
+      const { ancestors } = JSON.parse(req.params.ids);
       const { userId, commentText, level } = req.body.params;
   
       console.log("new-reply-comment: ancestors are: " + ancestors);

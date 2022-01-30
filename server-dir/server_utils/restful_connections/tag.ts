@@ -18,6 +18,7 @@ export class Tags{
   constructor(router: Router, mongoose: Mongoose){
     this.router = router;
     this.mongoose = mongoose;
+    this.getAllTags();
     this.getTags();
     this.newTags();
     //---add any additional functions here---
@@ -26,10 +27,37 @@ export class Tags{
 
   
   /**
+   * util function getAllTags:
+   * 
+   * returns all tags in the db.
+   * 
+   */
+   async getAllTags(){
+    this.router.get('/tags',async (req: Request, res: Response)=>{
+      console.log("entered find-tags-oid");
+      
+      const tagModel = this.mongoose.models.Tag || this.mongoose.model('Tag', retrieveTagSchema(this.mongoose));
+      console.log("find-tags-oid: connected to tag model");
+      //search the tags, error if not all returns:
+      await tagModel.find({}).orFail().lean().exec().then((result: LeanDocument<TagBE>[])=>{
+        console.log("find-tags-oid: returning tags: " + result);
+        res.json(JSON.stringify(result));
+      }).catch((err)=>{
+        if (err.name == "DocumentNotFoundError") res.sendStatus(404);
+        else if (err.name == "BadParameters") res.sendStatus(400);
+        else res.sendStatus(500);
+      });
+    });
+  }
+  
+
+  
+  /**
    * util function findTagsOid:
    * 
    * searches for the requested tags and returns their oids.
-   * @param router express router to be used
+   * 
+   * @param query search parameters, sent in form "search:"
    */
    async getTags(){
       this.router.get('/tags/q/:query/s/:select',async (req: Request, res: Response)=>{
@@ -37,15 +65,35 @@ export class Tags{
         const { query, select } = req.params;
         console.log(query, select);
 
-        let requestedTags = query.split('-');
-        requestedTags = Object.fromEntries(requestedTags.map(elem=>elem.split(':')));
-        for (const elem in requestedTags) {if(elem == "" || requestedTags[elem] == "") throw new Error("BadParameters")}
+        const queryParams = query.split('/');
+        if (queryParams.length%2!=0) throw new Error("Too Few Parameters");
+
+        const parsedQuery = [];
+        //const parsedSelect = [];
+        for (let i=0; i<queryParams.length;i+=2) {
+          const searchParams = queryParams[i+1].split('&');
+          const stringifiedSearchParams = searchParams.reduce((prev, curr) => {
+            return (prev.concat(' ' + curr));
+          });
+          parsedQuery.push( {[queryParams[i]] : stringifiedSearchParams});
+        }
+        const parsedSelect = select.replace('&', ' ');
+
+        
+        /* const splitQuery = query.split(':');
+        const parsedQuery = splitQuery.reduce((prev, curr) => {
+            return prev.concat(' ' + curr);
+        }); */
+
+        //let requestedTags = query.split('-');
+        //requestedTags = Object.fromEntries(requestedTags.map(elem=>elem.split(':')));
+        //for (const elem in requestedTags) {if(elem == "" || requestedTags[elem] == "") throw new Error("BadParameters")}
         //should probably check for select as well, but a bit more convoluted
 
         const tagModel = this.mongoose.models.Tag || this.mongoose.model('Tag', retrieveTagSchema(this.mongoose));
         console.log("find-tags-oid: connected to tag model");
         //search the tags, error if not all returns:
-        await tagModel.find(requestedTags).select(select).orFail().lean().exec().then((result: LeanDocument<TagBE>[])=>{
+        await tagModel.find(parsedQuery).select(parsedSelect).orFail().lean().exec().then((result: LeanDocument<TagBE>[])=>{
           //const unsavedTags = tags.
           //commenting that out for now:
           /* const foundTags = result.map((tag: any)=>new tagModel({tagName: tag}));

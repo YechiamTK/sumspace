@@ -48,20 +48,14 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
     const postComment = (event: React.FormEvent<HTMLFormElement>, commentText: string, level?: number, commentsIds?: Array<number | string>) => {
         if (level) {
             console.log(commentsIds);
-            axios.post("/new-reply-comment",{
+            axios.put(`/summaries/${props.selectedPost._id}/comments/ancestors/${JSON.stringify(commentsIds)}`,{
                 params: {
                     userId: user._id,
                     commentText: commentText,
-                    summaryId: props.selectedPost._id,
-                    level: level,
-                    ancestors: commentsIds
+                    level: level
                 }
             }).then(async ()=>{
-                axios.post('/full-summary',{
-                    params:{
-                        summaryId: props.selectedPost._id
-                    }
-                }).then((response)=>{
+                axios.get(`/summaries/${props.selectedPost._id}`).then((response)=>{
                     console.log(response.data);
                     dispatch({type: 'EXTEND_POST', payload: response.data});
                 }).then(()=>{
@@ -72,18 +66,13 @@ export const DiscussionView = (props: SummaryProps):JSX.Element => {
             });
         }
         else {
-            axios.post("/new-comment",{
+            axios.put(`/summaries/${props.selectedPost._id}/comments/`,{
                 params: {
                     userId: user._id,
-                    commentText: commentText,
-                    summaryId: props.selectedPost._id
+                    commentText: commentText
                 }
             }).then(async ()=>{
-                axios.post('/full-summary',{
-                    params:{
-                        summaryId: props.selectedPost._id
-                    }
-                }).then((response)=>{
+                axios.get(`/summaries/${props.selectedPost._id}`).then((response)=>{
                     console.log(response.data);
                     dispatch({type: 'EXTEND_POST', payload: response.data});
                 }).then(()=>{

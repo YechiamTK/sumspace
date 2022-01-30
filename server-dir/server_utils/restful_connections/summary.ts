@@ -232,7 +232,7 @@ export class Summaries{
      * 
     */
     async fullSummary(){
-      this.router.post('/summaries/:id', (req: Request, res: Response)=>{
+      this.router.get('/summaries/:id', (req: Request, res: Response)=>{
         const { summaryId } = req.params;
     
         const summaryModel = this.mongoose.models.Summary || this.mongoose.model('Summary', retrieveSummarySchema(this.mongoose));

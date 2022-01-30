@@ -21,7 +21,7 @@ export const ExploreRoute = ():JSX.Element => {
     
     //receive relevant tags
     useEffect(()=>{
-        axios.get('/get-tags').then((response) => {
+        axios.get('/tags').then((response) => {
             if (response.data !== typeof String)
                 setTags(response.data);
             else
@@ -31,7 +31,7 @@ export const ExploreRoute = ():JSX.Element => {
 
     //receive relevant authors
     useEffect(()=>{
-        axios.get('/get-authors').then((response) => {
+        axios.get('/authors').then((response) => {
             if (response.data !== typeof String)
                 setAuthors(response.data);
             else
